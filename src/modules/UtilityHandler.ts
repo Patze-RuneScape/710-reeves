@@ -93,6 +93,7 @@ export default class UtilityHandler {
                 kc70k: '<@&1057867190709256261>',
                 ofThePraesul: '<@&1057867190650540082>',
                 goldenPraesul: '<@&1057867190709256260>',
+                trialee: '<@&1057867190596010033>',
             }
         }
         return {
@@ -109,6 +110,7 @@ export default class UtilityHandler {
             kc70k: '<@&1020821253155721226>',
             ofThePraesul: '<@&474307399851835414>',
             goldenPraesul: '<@&589268459502960642>',
+            trialee: '<@&666034554150322200>',
         }
     }
 
