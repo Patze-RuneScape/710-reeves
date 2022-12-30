@@ -129,7 +129,7 @@ export default class InteractionHandler extends EventEmitter {
                         }
                         break;
                     case 'ELEVATED_ROLE':
-                        const hasRolePermissions = await this.client.util.hasRolePermissions(this.client, ['admin', 'owner'], interaction);
+                        const hasRolePermissions = await this.client.util.hasRolePermissions(this.client, ['trialHost', 'organizer', 'admin', 'owner'], interaction);
                         interface KeyMap {
                             [key: string]: string
                         }
@@ -163,7 +163,7 @@ export default class InteractionHandler extends EventEmitter {
                         }
                         break;
                     case 'TRIAL_TEAM':
-                        if (!(await this.client.util.hasRolePermissions(this.client, ['trialTeam', 'admin', 'owner'], interaction))) {
+                        if (!(await this.client.util.hasRolePermissions(this.client, ['trialTeam', 'trialHost', 'organizer', 'admin', 'owner'], interaction))) {
                             this.client.logger.log(
                                 {
                                     message: `Attempted restricted permissions. { command: ${command.name}, user: ${interaction.user.username}, channel: ${interaction.channel} }`,
