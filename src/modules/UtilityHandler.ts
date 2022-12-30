@@ -72,8 +72,8 @@ export default class UtilityHandler {
             }
         }
         return {
-            achievementsAndLogs: '429378540115329044',
-            botRoleLog: '1045192967754883172',
+            achievementsAndLogs: '1058373790289109092',
+            botRoleLog: '1058373508314431528',
         }
     }
 
