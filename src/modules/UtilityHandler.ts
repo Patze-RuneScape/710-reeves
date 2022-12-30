@@ -26,13 +26,6 @@ interface Emojis {
 interface Categories {
     killCount: string[]
     collectionLog: string[]
-    matchmaking: MatchmakingCategory
-}
-
-interface MatchmakingCategory {
-    threeSeven: string[]
-    duo: string[]
-    combined: string[]
 }
 
 export default class UtilityHandler {
@@ -74,135 +67,55 @@ export default class UtilityHandler {
     get channels(): Channels {
         if (process.env.ENVIRONMENT === 'DEVELOPMENT') {
             return {
-                roleConfirmations: '1043923758781571126',
-                achievementsAndLogs: '1043923759280697405',
-                botRoleLog: '1044636757808922766',
-                reportLog: '1047434337647329330',
-                tempVCCategory: '1043923758781571128',
-                tempVCCreate: '1044828975106641920',
-                dpmCalc: '1043923759280697406',
-                trialScheduling: '1051512803485286481',
+                achievementsAndLogs: '1058275396208054402',
+                botRoleLog: '1058275602060288101',
             }
         }
         return {
-            roleConfirmations: '846853673476685824',
             achievementsAndLogs: '429378540115329044',
             botRoleLog: '1045192967754883172',
-            reportLog: '1046699857433342103',
-            tempVCCategory: '429001601089536007',
-            tempVCCreate: '934588464068968479',
-            dpmCalc: '927485855625515039',
-            trialScheduling: '1050019465993142412',
-        }
-    }
-
-    get dpm() {
-        return {
-            'initiate': 270,
-            'adept': 330,
-            'mastery': 410,
-            'extreme': 475
         }
     }
 
     get roles(): Roles {
         if (process.env.ENVIRONMENT === 'DEVELOPMENT') {
             return {
-                duoMaster: '<@&1043923757732999218>',
-                threeSevenMaster: '<@&1043923757707829449>',
-                master: '<@&1043923757732999219>',
-                solakAddict: '<@&1043923757665890440>',
-                trialTeam: '<@&1043923757783326780>',
-                admin: '<@&1043923757783326788>',
-                owner: '<@&1043923757783326789>',
-                duoRootskips: '<@&1043923757707829443>',
-                threeSevenRootskips: '<@&1043923757707829442>',
-                rootskips: '<@&1043923757707829444>',
-                noRealm: '<@&1043923757707829441>',
-                duoExperienced: '<@&1043923757707829446>',
-                threeSevenExperienced: '<@&1043923757707829445>',
-                experienced: '<@&1043923757707829447>',
-                duoGrandmaster: '<@&1043923757732999225>',
-                threeSevenGrandmaster: '<@&1043923757732999224>',
-                grandmaster: '<@&1043923757732999226>',
-                erethdorsBane: '<@&1043923757758156862>',
-                solakRookie: '<@&1043923757665890437>',
-                solakCasual: '<@&1043923757665890438>',
-                solakEnthusiast: '<@&1043923757665890439>',
-                unlockedPerdita: '<@&1043923757665890441>',
-                solakFanatic: '<@&1043923757665890442>',
-                solakSlave: '<@&1043923757665890443>',
-                solakSimp: '<@&1044291432531369994>',
-                solakLegend: '<@&1044291464898822204>',
-                nightOutWithMyRightHand: '<@&1043923757619744831>',
-                probablyUsesSpecialScissors: '<@&1043923757619744830>',
-                oneForTheBooks: '<@&1043923757619744829>',
-                brokenPrinter: '<@&1043923757619744828>',
-                merethielsSimp: '<@&1043923757598781470>',
-                shroomDealer: '<@&1043923757598781469>',
-                verifiedLearner: '<@&1043923757707829440>',
-                solakWRHolder: '<@&1043923757732999223>',
-                guardianOfTheGrove: '<@&1043923757691047936>',
-                initiate: '<@&1043923757691047943>',
-                adept: '<@&1043923757691047945>',
-                mastery: '<@&1043923757691047944>',
-                extreme: '<@&1043923757732999222>',
-                moderator: '<@&1050759587898339409>',
+                trialHost: '<@&1057867190742814787>',
+                organizer: '<@&1057867190776385586>',
+                admin: '<@&1057867190776385589>',
+                owner: '<@&1057867190776385590>',
+                kc10k: '<@&1057867190637953033>',
+                kc20k: '<@&1057867190637953034>',
+                kc30k: '<@&1057867190650540086>',
+                kc40k: '<@&1057867190709256256>',
+                kc50k: '<@&1057867190650540087>',
+                kc60k: '<@&1057867190709256259>',
+                kc70k: '<@&1057867190709256261>',
+                ofThePraesul: '<@&1057867190650540082>',
+                goldenPraesul: '<@&1057867190709256260>',
             }
         }
         return {
-            duoMaster: '<@&1024218594504081408>',
-            threeSevenMaster: '<@&981579218771120249>',
-            master: '<@&1024260851286413322>',
-            solakAddict: '<@&553715068273950751>',
-            trialTeam: '<@&488073429975826452>',
-            admin: '<@&519490446368571392>',
-            owner: '<@&553738397848698882>',
-            duoRootskips: '<@&1007584848719912973>',
-            threeSevenRootskips: '<@&931903313144848394>',
-            rootskips: '<@&1037493398220841060>',
-            noRealm: '<@&931903143279755306>',
-            duoExperienced: '<@&931903449396834364>',
-            threeSevenExperienced: '<@&981579337159565383>',
-            experienced: '<@&981581909387800586>',
-            duoGrandmaster: '<@&1024218474727342100>',
-            threeSevenGrandmaster: '<@&969190288675450900>',
-            grandmaster: '<@&1024260846152597575>',
-            erethdorsBane: '<@&793913994980491344>',
-            solakRookie: '<@&553714327740481536>',
-            solakCasual: '<@&553714447231877130>',
-            solakEnthusiast: '<@&553714570145955892>',
-            unlockedPerdita: '<@&493153184995606558>',
-            solakFanatic: '<@&553716549593202732>',
-            solakSlave: '<@&932238504958771201>',
-            solakSimp: '<@&1038562094112587887>',
-            solakLegend: '<@&1038562124311564420>',
-            nightOutWithMyRightHand: '<@&862278802083676181>',
-            probablyUsesSpecialScissors: '<@&862278416060514314>',
-            oneForTheBooks: '<@&858689534300389416>',
-            brokenPrinter: '<@&858690604656885770>',
-            merethielsSimp: '<@&862276498098749440>',
-            shroomDealer: '<@&862276579727114250>',
-            verifiedLearner: '<@&935257969552142339>',
-            solakWRHolder: '<@&926057875367952394>',
-            guardianOfTheGrove: '<@&452531368132345866>',
-            initiate: '<@&927278371862380575>',
-            adept: '<@&927278601735397427>',
-            mastery: '<@&927278888403480668>',
-            extreme: '<@&793847049841279007>',
-            moderator: '<@&1050111253185568788>',
+            trialHost: '<@&635646418123751434>',
+            organizer: '<@&374393957645287426>',
+            admin: '<@&315714278940213258>',
+            owner: '<@&722641577733914625>',
+            kc10k: '<@&963277353927204864>',
+            kc20k: '<@&963277215955583066>',
+            kc30k: '<@&963276930910666752>',
+            kc40k: '<@&963276807702982676>',
+            kc50k: '<@&963276584775720980>',
+            kc60k: '<@&962002662616858785>',
+            kc70k: '<@&1020821253155721226>',
+            ofThePraesul: '<@&474307399851835414>',
+            goldenPraesul: '<@&589268459502960642>',
         }
     }
 
     get categories(): Categories {
         return {
-            killCount: ['solakRookie', 'solakCasual', 'solakEnthusiast', 'solakAddict', 'unlockedPerdita', 'solakFanatic', 'solakSlave', 'solakSimp', 'solakLegend'],
-            collectionLog: ['nightOutWithMyRightHand', 'probablyUsesSpecialScissors', 'oneForTheBooks', 'brokenPrinter', 'merethielsSimp', 'shroomDealer', 'guardianOfTheGrove'],
-            matchmaking: {
-                threeSeven: ['noRealm', 'threeSevenRootskips', 'threeSevenExperienced', 'threeSevenMaster', 'threeSevenGrandmaster'],
-                duo: ['duoRootskips', 'duoExperienced', 'duoMaster', 'duoGrandmaster'],
-                combined: ['rootskips', 'experienced', 'master', 'grandmaster']
-            }
+            killCount: ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k'],
+            collectionLog: ['ofThePraesul', 'goldenPraesul']
         }
     }
 
@@ -220,12 +133,6 @@ export default class UtilityHandler {
             category = 'killCount';
         } else if (this.categories.collectionLog.includes(role)) {
             category = 'collectionLog';
-        } else if (this.categories.matchmaking.threeSeven.includes(role)) {
-            category = 'threeSeven';
-        } else if (this.categories.matchmaking.duo.includes(role)) {
-            category = 'duo';
-        } else if (this.categories.matchmaking.combined.includes(role)) {
-            category = 'combined';
         } else {
             category = ''
         }
@@ -233,13 +140,8 @@ export default class UtilityHandler {
     }
 
     public categorizeChannel = (role: string) => {
-        const overrides = {
-            roleConfirmations: ['erethdorsBane', 'solakWRHolder'],
-        }
         if (this.categories.killCount.includes(role) || this.categories.collectionLog.includes(role)) {
             return 'achievementsAndLogs'
-        } else if (overrides.roleConfirmations.includes(role) || this.categories.matchmaking.combined.includes(role) || this.categories.matchmaking.duo.includes(role) || this.categories.matchmaking.threeSeven.includes(role)) {
-            return 'roleConfirmations'
         } else {
             return ''
         }
