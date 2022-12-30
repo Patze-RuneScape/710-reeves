@@ -1,5 +1,5 @@
 import BotInteraction from '../../types/BotInteraction';
-import { Attachment, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { Attachment, ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 
 export default class Say extends BotInteraction {
     get name() {
@@ -26,6 +26,14 @@ export default class Say extends BotInteraction {
         await interaction.deferReply({ ephemeral: true });
         const message: string = interaction.options.getString('message', true);
         const attachment: Attachment | null = interaction.options.getAttachment('image', false);
+
+        const errorEmbed = new EmbedBuilder()
+            .setColor(this.client.util.colours.discord.red)
+            .setDescription('No mass mentions!');
+
+        if (message.includes('@everyone') || message.includes('@here')) {
+            return await interaction.editReply({ embeds: [errorEmbed] });
+        }
         // const role: Role | APIRole | null = interaction.options.getRole('role_search', false);
         // const _role_members = interaction.guild?.roles.cache.get(role?.id)?.members.size;
         await interaction.channel?.send(attachment ? { content: message, files: [attachment] } : { content: message });
