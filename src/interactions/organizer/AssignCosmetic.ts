@@ -8,7 +8,7 @@ interface Hierarchy {
 interface RemoveHierarchy {
     [key: string]: string[];
 }
-export default class Pass extends BotInteraction {
+export default class Cosmetic extends BotInteraction {
     get name() {
         return 'assign-cosmetic';
     }

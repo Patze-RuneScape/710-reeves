@@ -2,7 +2,7 @@ import BotInteraction from '../../types/BotInteraction';
 import { Override } from '../../entity/Override';
 import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, User } from 'discord.js';
 
-export default class Pass extends BotInteraction {
+export default class Grant extends BotInteraction {
     get name() {
         return 'grant';
     }
