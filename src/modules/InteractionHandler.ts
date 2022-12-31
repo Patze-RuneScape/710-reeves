@@ -134,8 +134,8 @@ export default class InteractionHandler extends EventEmitter {
                             [key: string]: string
                         }
                         const keyMap: KeyMap = {
-                            'reports': 'reports',
-                            'upkeep': 'trials'
+                            'assign-cosmetic': 'assign',
+                            'assign-trialed': 'assign'
                         }
                         if (command.name in keyMap) {
                             const overridePermissions = await this.client.util.hasOverridePermissions(interaction, keyMap[command.name]);
@@ -160,6 +160,18 @@ export default class InteractionHandler extends EventEmitter {
                                 );
                                 return await interaction.reply({ content: 'You do not have permissions to run this command. This incident has been logged.', ephemeral: true });
                             }
+                        }
+                        break;
+                    case 'APPLICATION_TEAM':
+                        if (!(await this.client.util.hasRolePermissions(this.client, ['applicationTeam', 'organizer', 'admin', 'owner'], interaction))) {
+                            this.client.logger.log(
+                                {
+                                    message: `Attempted restricted permissions. { command: ${command.name}, user: ${interaction.user.username}, channel: ${interaction.channel} }`,
+                                    handler: this.constructor.name,
+                                },
+                                true
+                            );
+                            return await interaction.reply({ content: 'You do not have permissions to run this command. This incident has been logged.', ephemeral: true });
                         }
                         break;
                     case 'TRIAL_TEAM':

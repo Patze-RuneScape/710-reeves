@@ -17,9 +17,7 @@ export default class Revoke extends BotInteraction {
 
     get featureOptions() {
         const assignOptions: any = {
-            'Reports': 'reports',
-            'Roles': 'assign',
-            'Trials': 'trials'
+            'Roles': 'assign'
         }
         const options: any = [];
         Object.keys(assignOptions).forEach((key: string) => {
