@@ -7,7 +7,7 @@ export default class Trialed extends BotInteraction {
     }
 
     get description() {
-        return 'Assigns a trialled role to a user';
+        return 'Assigns a trialed role to a user';
     }
 
     get permissions() {
