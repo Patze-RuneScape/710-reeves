@@ -94,6 +94,25 @@ export default class UtilityHandler {
                 ofThePraesul: '<@&1057867190650540082>',
                 goldenPraesul: '<@&1057867190709256260>',
                 trialee: '<@&1057867190596010033>',
+                magicMT: '<@&1057867190625390618>',
+                magicFree: '<@&1057867190625390615>',
+                magicBase: '<@&1057867190625390616>',
+                magicUmbra: '<@&1057867190625390617>',
+                rangeMT: '<@&1057867190637953029>',
+                rangeFree: '<@&1057867190637953025>',
+                rangeBase: '<@&1057867190637953026>',
+                rangeUmbra: '<@&1057867190637953028>',
+                chinner: '<@&1057867190637953027>',
+                meleeMT: '<@&1057867190625390614>',
+                meleeFree: '<@&1057867190608597072>',
+                meleeBase: '<@&1057867190625390612>',
+                meleeUmbra: '<@&1057867190625390613>',
+                mrMT: '<@&1057867190625390619>',
+                mrHammer: '<@&1057867190625390621>',
+                mrBase: '<@&1057867190625390620>',
+                cdar: '<@&1057867190650540088>',
+                mockTrialFiller: '<@&1057867190637953031>',
+                trialTeam: '<@&1057867190650540089>',
             }
         }
         return {
@@ -111,13 +130,32 @@ export default class UtilityHandler {
             ofThePraesul: '<@&474307399851835414>',
             goldenPraesul: '<@&589268459502960642>',
             trialee: '<@&666034554150322200>',
+            magicMT: '<@&926622122489561188>',
+            magicFree: '<@&926622517769142282>',
+            magicBase: '<@&926622383052296283>',
+            magicUmbra: '<@&932006805528268912>',
+            rangeMT: '<@&926621263332540446>',
+            rangeFree: '<@&926621934169522226>',
+            rangeBase: '<@&926621810806636594>',
+            rangeUmbra: '<@&934920570921967686>',
+            chinner: '<@&926621575296475260>',
+            meleeMT: '<@&926622693908946974>',
+            meleeFree: '<@&926623795475787807>',
+            meleeBase: '<@&926623603150164008>',
+            meleeUmbra: '<@&934920368441938012>',
+            mrMT: '<@&1021475735128506421>',
+            mrHammer: '<@&1021479839003312168>',
+            mrBase: '<@&1021476019284213860>',
+            cdar: '<@&814177068467224596>',
+            mockTrialFiller: '<@&724464712217264208>',
+            trialTeam: '<@&469546608531472385>',
         }
     }
 
     get categories(): Categories {
         return {
             killCount: ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k'],
-            collectionLog: ['ofThePraesul', 'goldenPraesul']
+            collectionLog: ['ofThePraesul', 'goldenPraesul'],
         }
     }
 
