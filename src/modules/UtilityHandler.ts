@@ -113,6 +113,7 @@ export default class UtilityHandler {
                 cdar: '<@&1057867190650540088>',
                 mockTrialFiller: '<@&1057867190637953031>',
                 trialTeam: '<@&1057867190650540089>',
+                applicationTeam: '<@&1057867190684110884>',
             }
         }
         return {
@@ -149,6 +150,7 @@ export default class UtilityHandler {
             cdar: '<@&814177068467224596>',
             mockTrialFiller: '<@&724464712217264208>',
             trialTeam: '<@&469546608531472385>',
+            applicationTeam: '<@&968901102911246377>',
         }
     }
 
