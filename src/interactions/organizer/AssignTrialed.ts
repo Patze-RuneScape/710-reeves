@@ -81,6 +81,11 @@ export default class Trialed extends BotInteraction {
             await user?.roles.remove(stripRole(roles.trialee));
         }
 
+        // Add 7-Man tag
+        if (!userRoles?.includes(stripRole(roles.sevenMan))) {
+            await user?.roles.add(stripRole(roles.sevenMan));
+        }
+
         let returnedMessage = {
             id: '',
             url: ''

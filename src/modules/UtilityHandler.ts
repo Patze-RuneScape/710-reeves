@@ -114,6 +114,7 @@ export default class UtilityHandler {
                 mockTrialFiller: '<@&1057867190637953031>',
                 trialTeam: '<@&1057867190650540089>',
                 applicationTeam: '<@&1057867190684110884>',
+                sevenMan: '<@&1057867190650540084>',
             }
         }
         return {
@@ -151,6 +152,7 @@ export default class UtilityHandler {
             mockTrialFiller: '<@&724464712217264208>',
             trialTeam: '<@&469546608531472385>',
             applicationTeam: '<@&968901102911246377>',
+            sevenMan: '<@&337723869508927489>',
         }
     }
 
