@@ -76,11 +76,19 @@ export default class UtilityHandler {
             return {
                 achievementsAndLogs: '1058275396208054402',
                 botRoleLog: '1058275602060288101',
+                naMock: '1057867192391192665',
+                naTrial: '1057867192609275919',
+                euMock: '1057867192391192664',
+                euTrial: '1057867192609275918',
             }
         }
         return {
             achievementsAndLogs: '1058373790289109092',
             botRoleLog: '1058373508314431528',
+            naMock: '954775172609630218',
+            naTrial: '1053834698654224474',
+            euMock: '765479967114919937',
+            euTrial: '1053834651791265792',
         }
     }
 
@@ -122,6 +130,11 @@ export default class UtilityHandler {
                 trialTeam: '<@&1057867190650540089>',
                 applicationTeam: '<@&1057867190684110884>',
                 sevenMan: '<@&1057867190650540084>',
+                trialeeTeacher: '<@&1057867190684110886>',
+                pingNA: '<@&1057867190608597068>',
+                pingNATrial: '<@&1057867190608597065>',
+                pingEU: '<@&1057867190608597069>',
+                pingEUTrial: '<@&1057867190608597066>',
             }
         }
         return {
@@ -160,6 +173,11 @@ export default class UtilityHandler {
             trialTeam: '<@&469546608531472385>',
             applicationTeam: '<@&968901102911246377>',
             sevenMan: '<@&337723869508927489>',
+            trialeeTeacher: '<@&664351536583016459>',
+            pingNA: '<@&959522928247066664>',
+            pingNATrial: '<@&1050233459274158193>',
+            pingEU: '<@&959522492593098762>',
+            pingEUTrial: '<@&1050262078147022908>',
         }
     }
 
@@ -303,5 +321,15 @@ export default class UtilityHandler {
             }
         }
         return true;
+    }
+
+    public getTeamCount(players: APIEmbedField[]): number {
+        let maxPlayers = 7;
+        for (const player of players) {
+            if (player.value === '`Empty`') {
+                maxPlayers = maxPlayers - 1;
+            }
+        }
+        return maxPlayers;
     }
 }
