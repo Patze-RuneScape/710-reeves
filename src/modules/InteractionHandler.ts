@@ -3,6 +3,7 @@ import { EmbedBuilder, Collection, Interaction } from 'discord.js';
 import Bot from '../Bot';
 import BotInteraction from '../types/BotInteraction';
 import ButtonHandler from './ButtonHandler';
+import ModalHandler from './ModalHandler';
 import EventEmitter = require('events');
 
 export default interface InteractionHandler {
@@ -110,6 +111,9 @@ export default class InteractionHandler extends EventEmitter {
     async exec(interaction: Interaction): Promise<any> {
         if (interaction.isButton() && interaction.inCachedGuild()) {
             return new ButtonHandler(this.client, interaction.customId, interaction);
+        }
+        if (interaction.isModalSubmit() && interaction.inCachedGuild()) {
+            return new ModalHandler(this.client, interaction.customId, interaction);
         }
         if (interaction.isCommand() && interaction.isRepliable() && interaction.inCachedGuild()) {
             try {
