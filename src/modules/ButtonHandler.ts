@@ -1,4 +1,4 @@
-import { ButtonInteraction, EmbedBuilder, InteractionResponse, Message, TextChannel } from 'discord.js';
+import { ActionRowBuilder, ButtonInteraction, EmbedBuilder, InteractionResponse, Message, ModalActionRowComponentBuilder, ModalBuilder, TextChannel, TextInputBuilder, TextInputStyle } from 'discord.js';
 import Bot from '../Bot';
 
 export default interface ButtonHandler { client: Bot; id: string; interaction: ButtonInteraction }
@@ -10,6 +10,14 @@ export default class ButtonHandler {
         this.interaction = interaction;
         switch (id) {
             case 'rejectRoleAssign': this.rejectRoleAssign(interaction); break;
+            case 'passTrialee': this.passTrialee(interaction); break;
+            case 'selectBase': this.selectBase(interaction); break;
+            case 'selectHammer': this.selectHammer(interaction); break;
+            case 'selectFree': this.selectFree(interaction); break;
+            case 'selectUmbra': this.selectUmbra(interaction); break;
+            case 'selectGlacies': this.selectGlacies(interaction); break;
+            case 'selectCruor': this.selectCruor(interaction); break;
+            case 'selectFumus': this.selectFumus(interaction); break;
             default: break;
         }
     }
@@ -20,6 +28,82 @@ export default class ButtonHandler {
 
     get currentTime(): number {
         return Math.round(Date.now() / 1000)
+    }
+
+    public async handleRoleSelection(interaction: ButtonInteraction<'cached'>, roleString: string): Promise<Message<true> | InteractionResponse<true> | void> {
+
+        const { colours, checkForUserId, getEmptyObject } = this.client.util;
+
+        await interaction.deferReply({ ephemeral: true });
+        const hasRolePermissions = await this.client.util.hasRolePermissions(this.client, ['trialTeam'], interaction);
+        if (hasRolePermissions) {
+            const messageEmbed = interaction.message.embeds[0];
+            const messageContent = messageEmbed.data.description;
+            const fields = messageEmbed.fields;
+            const existingRole = checkForUserId(`<@${interaction.user.id}>`, fields);
+            const replyEmbed = new EmbedBuilder();
+            if (existingRole) {
+                const { obj: role, index } = existingRole;
+                if (role.name.includes(roleString)) {
+                    fields[index].value = '`Empty`';
+                    replyEmbed.setColor(colours.discord.green).setDescription(`Successfully unassigned from **${roleString}**.`);
+                } else {
+                    replyEmbed.setColor(colours.discord.red).setDescription('You are signed up as a different role. Unassign from that role first.');
+                }
+            } else {
+                const firstEmptyObject = getEmptyObject(roleString, fields);
+                if (firstEmptyObject) {
+                    const { index } = firstEmptyObject;
+                    fields[index].value = `<@${interaction.user.id}>`;
+                    replyEmbed.setColor(colours.discord.green).setDescription(`Successfully assigned to **${roleString}**.`);
+                } else {
+                    replyEmbed.setColor(colours.discord.red).setDescription(`**${roleString}** is already taken.`);
+                }
+            }
+            const newEmbed = new EmbedBuilder()
+                .setColor(messageEmbed.color)
+                .setDescription(`${messageContent}`)
+                .setFields(fields);
+            await interaction.message.edit({ embeds: [newEmbed] })
+            return await interaction.editReply({ embeds: [replyEmbed] });
+        } else {
+            this.client.logger.log(
+                {
+                    message: `Attempted restricted permissions. { command: Select ${roleString} Role, user: ${interaction.user.username}, channel: ${interaction.channel} }`,
+                    handler: this.constructor.name,
+                },
+                true
+            );
+            return await interaction.editReply({ content: 'You do not have permissions to run this command. This incident has been logged.' });
+        }
+    }
+
+    private async selectBase(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
+        await this.handleRoleSelection(interaction, 'Base');
+    }
+
+    private async selectHammer(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
+        await this.handleRoleSelection(interaction, 'Hammer');
+    }
+
+    private async selectFree(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
+        await this.handleRoleSelection(interaction, 'Free');
+    }
+
+    private async selectUmbra(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
+        await this.handleRoleSelection(interaction, 'Umbra');
+    }
+
+    private async selectGlacies(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
+        await this.handleRoleSelection(interaction, 'Glacies');
+    }
+
+    private async selectCruor(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
+        await this.handleRoleSelection(interaction, 'Cruor');
+    }
+
+    private async selectFumus(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
+        await this.handleRoleSelection(interaction, 'Fumus');
     }
 
     private async rejectRoleAssign(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
@@ -72,6 +156,52 @@ export default class ButtonHandler {
             this.client.logger.log(
                 {
                     message: `Attempted restricted permissions. { command: Reject Role Assign, user: ${interaction.user.username}, channel: ${interaction.channel} }`,
+                    handler: this.constructor.name,
+                },
+                true
+            );
+            return await interaction.editReply({ content: 'You do not have permissions to run this command. This incident has been logged.' });
+        }
+    }
+
+    private async passTrialee(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
+
+        const { hasOverridePermissions, hasRolePermissions } = this.client.util;
+
+        const rolePermissions = await hasRolePermissions(this.client, ['organizer', 'admin', 'owner'], interaction);
+        const overridePermissions = await hasOverridePermissions(interaction, 'assign');
+
+        if (rolePermissions || overridePermissions) {
+            const modal = new ModalBuilder()
+                .setCustomId('passTrialee')
+                .setTitle('Pass Trialee');
+
+            // Create the text input components
+            const gemURL = new TextInputBuilder()
+                .setCustomId('gemURL')
+                .setLabel("Challenge Gem URL")
+                .setStyle(TextInputStyle.Short)
+                .setRequired(false);
+
+            const comments = new TextInputBuilder()
+                .setCustomId('comments')
+                .setLabel("Comments")
+                .setStyle(TextInputStyle.Paragraph)
+                .setRequired(false);
+
+            const firstActionRow = new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(gemURL);
+            const secondActionRow = new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(comments);
+
+            // Add inputs to the modal
+            modal.addComponents(firstActionRow, secondActionRow);
+
+            // Show the modal to the user
+            await interaction.showModal(modal);
+        } else {
+            await interaction.deferReply({ ephemeral: true });
+            this.client.logger.log(
+                {
+                    message: `Attempted restricted permissions. { command: Pass Trialee, user: ${interaction.user.username}, channel: ${interaction.channel} }`,
                     handler: this.constructor.name,
                 },
                 true

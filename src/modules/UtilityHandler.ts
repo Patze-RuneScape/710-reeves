@@ -61,6 +61,13 @@ export default class UtilityHandler {
             gem1: '<:gem1:1057231061375008799>',
             gem2: '<:gem2:1057231076239605770>',
             gem3: '<:gem3:1057231089854324736>',
+            umbra: '<:umbra:1025086079319162880>',
+            glacies: '<:glacies:1025086094775177297>',
+            cruor: '<:cruor:1025085871772409937>',
+            fumus: '<:fumus:1025086111262982237>',
+            voke: '<:voke:1060164889848590487>',
+            hammer: '<:hammer:1060164664266338344>',
+            freedom: '<:freedom:1060164666103435384>',
         }
     }
 
@@ -273,7 +280,7 @@ export default class UtilityHandler {
 
     public checkForUserId = (userId: string, objects: APIEmbedField[]): { obj: APIEmbedField, index: number } | undefined => {
         for (let i = 0; i < objects.length; i++) {
-            if (objects[i].value === userId) {
+            if (objects[i].value.includes(userId)) {
                 return { obj: objects[i], index: i };
             }
         }
@@ -281,7 +288,7 @@ export default class UtilityHandler {
     };
 
     public getEmptyObject(targetName: string, objects: APIEmbedField[]): { obj: APIEmbedField, index: number } | undefined {
-        const index = objects.findIndex(obj => obj.name === targetName && obj.value === '`Empty`');
+        const index = objects.findIndex(obj => obj.name.includes(targetName) && obj.value === '`Empty`');
         if (index >= 0) {
             const obj = objects[index];
             return { obj: obj, index: index };
