@@ -79,14 +79,14 @@ export default class Pass extends BotInteraction {
         return new SlashCommandBuilder()
             .setName(this.name)
             .setDescription(this.description)
-            .addUserOption((option) => option.setName('user').setDescription('User').setRequired(true))
+            .addUserOption((option) => option.setName('user').setDescription('Trialee').setRequired(true))
             .addStringOption((option) => option.setName('role').setDescription('Trialee preferred role').addChoices(
                 ...this.roleOptions
             ).setRequired(true))
             .addStringOption((option) => option.setName('region').setDescription('Trial world').addChoices(
                 ...this.regionOptions
             ).setRequired(true))
-            .addStringOption((option) => option.setName('type').setDescription('Trial type').addChoices(
+            .addStringOption((option) => option.setName('trialtype').setDescription('Trial type').addChoices(
                 ...this.trialOptions
             ).setRequired(true))
             .addStringOption((option) => option.setName('time').setDescription('Time of trial. Must be in the format YYYY-MM-DD HH:MM in Gametime. e.g. 2022-11-05 06:00').setRequired(false))
@@ -116,6 +116,7 @@ export default class Pass extends BotInteraction {
         const role: string = interaction.options.getString('role', true);
         const user: User = interaction.options.getUser('user', true);
         const region: string = interaction.options.getString('region', true);
+        const trialType: string = interaction.options.getString('trialtype', true);
         const time: string | null = interaction.options.getString('time', false);
 
         const { roles, colours, channels, emojis } = this.client.util;
@@ -144,8 +145,26 @@ export default class Pass extends BotInteraction {
         }
 
         const roleInfo = await this.getTrialledRole(interaction, role);
-        console.log(role)
-        console.log(roleInfo)
+
+        let channelId: string;
+        let notifyRoleKey: string;
+        if (region === 'German') {
+            if (trialType === 'mock') {
+                channelId = channels.euMock;
+                notifyRoleKey = roles.pingEU;
+            } else {
+                channelId = channels.euTrial;
+                notifyRoleKey = roles.pingEUTrial;
+            }
+        } else {
+            if (trialType === 'mock') {
+                channelId = channels.naMock;
+                notifyRoleKey = roles.pingNA;
+            } else {
+                channelId = channels.naTrial;
+                notifyRoleKey = roles.pingNATrial;
+            }
+        }
 
         const firstRow = new ActionRowBuilder<ButtonBuilder>()
             .addComponents(
@@ -228,17 +247,18 @@ export default class Pass extends BotInteraction {
             `)
             .addFields(
                 fields
-            );
+            )
+            .setFooter({ text: '1/7 Players' });
 
-        const channel = await this.client.channels.fetch(channels.botRoleLog) as TextChannel;
+        const channel = await this.client.channels.fetch(channelId) as TextChannel;
         await channel.send(
-            { embeds: [embed], components: [firstRow, secondRow, controlPanel] }
+            { content: `${notifyRoleKey}`, embeds: [embed], components: [firstRow, secondRow, controlPanel] }
         )
 
         const replyEmbed = new EmbedBuilder()
-            .setTitle('Trial notification created!')
+            .setTitle('Trial card created!')
             .setColor(colours.discord.green)
-            .setDescription(`${roles['trialTeam']} has been notified in <#${channels.botRoleLog}>`);
+            .setDescription(`${notifyRoleKey} has been notified in <#${channelId}>`);
         await interaction.editReply({ embeds: [replyEmbed] });
     }
 }
