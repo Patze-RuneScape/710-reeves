@@ -1,4 +1,6 @@
 import { ActionRowBuilder, APIEmbedField, ButtonBuilder, ButtonInteraction, ButtonStyle, Embed, EmbedBuilder, InteractionResponse, Message, ModalActionRowComponentBuilder, ModalBuilder, TextChannel, TextInputBuilder, TextInputStyle } from 'discord.js';
+import { Trial } from '../entity/Trial';
+import { TrialParticipation } from '../entity/TrialParticipation';
 import Bot from '../Bot';
 
 export default interface ButtonHandler { client: Bot; id: string; interaction: ButtonInteraction }
@@ -11,6 +13,7 @@ export default class ButtonHandler {
         switch (id) {
             case 'rejectRoleAssign': this.rejectRoleAssign(interaction); break;
             case 'passTrialee': this.passTrialee(interaction); break;
+            case 'failTrialee': this.failTrialee(interaction); break;
             case 'selectBase': this.selectBase(interaction); break;
             case 'selectHammer': this.selectHammer(interaction); break;
             case 'selectFree': this.selectFree(interaction); break;
@@ -30,6 +33,40 @@ export default class ButtonHandler {
 
     get currentTime(): number {
         return Math.round(Date.now() / 1000)
+    }
+
+    public async saveTrial(interaction: ButtonInteraction<'cached'>, trialeeId: string, roleId: string, userId: string, fields: APIEmbedField[]): Promise<void> {
+        // Create new Trial.
+        const { dataSource } = this.client;
+        const trialRepository = dataSource.getRepository(Trial);
+        const trialObject = new Trial();
+        trialObject.trialee = trialeeId;
+        trialObject.host = userId;
+        trialObject.role = roleId;
+        trialObject.link = interaction.message.url;
+        const trial = await trialRepository.save(trialObject);
+
+        // Update Trial Attendees
+
+        const trialParticipants: TrialParticipation[] = [];
+        fields.forEach((member: APIEmbedField) => {
+            if (member.value !== '`Empty`' && !member.value.includes('Trialee')) {
+                const userIdRegex = /<@(\d+)>/;
+                const userIdMatch = member.value.match(userIdRegex);
+                if (userIdMatch) {
+                    const participant = new TrialParticipation();
+                    participant.participant = userIdMatch[1];;
+                    participant.role = member.name;
+                    participant.trial = trial;
+                    trialParticipants.push(participant);
+                }
+            }
+        })
+
+        // Save trial attendees
+
+        const participantReposittory = dataSource.getRepository(TrialParticipation);
+        await participantReposittory.save(trialParticipants);
     }
 
     public async handleRoleSelection(interaction: ButtonInteraction<'cached'>, roleString: string): Promise<Message<true> | InteractionResponse<true> | void> {
@@ -171,7 +208,7 @@ export default class ButtonHandler {
 
         const { hasOverridePermissions, hasRolePermissions } = this.client.util;
 
-        const rolePermissions = await hasRolePermissions(this.client, ['organizer', 'admin', 'owner'], interaction);
+        const rolePermissions = await hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
         const overridePermissions = await hasOverridePermissions(interaction, 'assign');
 
         if (rolePermissions || overridePermissions) {
@@ -233,7 +270,7 @@ export default class ButtonHandler {
             }
         }
         if (hasRolePermissions) {
-            const hasElevatedRole = await this.client.util.hasRolePermissions(this.client, ['organizer', 'admin', 'owner'], interaction);
+            const hasElevatedRole = await this.client.util.hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
             if ((interaction.user.id === userId) || hasElevatedRole) {
                 const newMessageContent = messageContent?.replace('> **Team**', '');
                 const newEmbed = new EmbedBuilder()
@@ -281,7 +318,7 @@ export default class ButtonHandler {
             }
         }
         if (hasRolePermissions) {
-            const hasElevatedRole = await this.client.util.hasRolePermissions(this.client, ['organizer', 'admin', 'owner'], interaction);
+            const hasElevatedRole = await this.client.util.hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
             if ((interaction.user.id === userId) || hasElevatedRole) {
                 // if (isTeamFull(fields)) {
                 const trialStarted = `> **Moderation**\n\n ⬥ Trial started <t:${this.currentTime}:R>.\n\n> **Team**`;
@@ -319,6 +356,76 @@ export default class ButtonHandler {
             this.client.logger.log(
                 {
                     message: `Attempted restricted permissions. { command: Start Trial, user: ${interaction.user.username}, channel: ${interaction.channel} }`,
+                    handler: this.constructor.name,
+                },
+                true
+            );
+            return await interaction.editReply({ content: 'You do not have permissions to run this command. This incident has been logged.' });
+        }
+    }
+
+    private async failTrialee(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
+        const { colours } = this.client.util;
+        await interaction.deferReply({ ephemeral: true });
+        const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
+        const messageEmbed: Embed = interaction.message.embeds[0];
+        const messageContent: string | undefined = messageEmbed.data.description;
+        const fields: APIEmbedField[] = messageEmbed.fields;
+        const hostExpression: RegExp = /\`Host:\` <@(\d+)>/;
+        const trialeeExpression: RegExp = /\`Discord:\` <@(\d+)>/;
+        const roleExpression: RegExp = /\`Tag:\` <@&(\d+)>/;
+        const replyEmbed: EmbedBuilder = new EmbedBuilder();
+        let userId: string = '';
+        let trialeeId: string = '';
+        let roleId: string = '';
+        if (messageContent) {
+            const hostMatches = messageContent.match(hostExpression);
+            const trialeeMatches = messageContent.match(trialeeExpression);
+            const roleMatches = messageContent.match(roleExpression);
+            userId = hostMatches ? hostMatches[1] : '';
+            trialeeId = trialeeMatches ? trialeeMatches[1] : '';
+            roleId = roleMatches ? roleMatches[1] : '';
+            if (!userId || !trialeeId || !roleId) {
+                // Should never really make it to this.
+                replyEmbed.setColor(colours.discord.red)
+                replyEmbed.setDescription('Host, Trialee or Tag could not be detected.')
+                return await interaction.editReply({ embeds: [replyEmbed] });
+            }
+        }
+        if (hasRolePermissions) {
+            const hasElevatedRole = await this.client.util.hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
+            if ((interaction.user.id === userId)|| hasElevatedRole) {
+                const splitResults = messageContent?.split('⬥');
+                if (!splitResults) {
+                    replyEmbed.setColor(colours.discord.red)
+                    replyEmbed.setDescription(`Message could not be parsed correctly.`)
+                    return await interaction.editReply({ embeds: [replyEmbed] });
+                }
+                const messageContentWithoutStarted = splitResults[0];
+                const dirtyStarted = splitResults[1];
+                const started = dirtyStarted?.replace('> **Team**', '').trim();
+                const newMessageContent = `${messageContentWithoutStarted}⬥ ${started}\n⬥ <@${trialeeId}> failed <t:${this.currentTime}:R>!\n\n> **Team**`;
+
+                // Save trial to database.
+                await this.saveTrial(interaction, trialeeId, roleId, userId, fields);
+
+                const newEmbed = new EmbedBuilder()
+                    .setColor(colours.discord.red)
+                    .setFields(fields)
+                    .setDescription(`${newMessageContent}`);
+                await interaction.message.edit({ content: '', embeds: [newEmbed], components: [] });
+                replyEmbed.setColor(colours.discord.green);
+                replyEmbed.setDescription(`Trialee failed!`);
+                return await interaction.editReply({ embeds: [replyEmbed] });
+            } else {
+                replyEmbed.setColor(colours.discord.red)
+                replyEmbed.setDescription(`Only <@${userId}> or an elevated role can fail this trialee.`)
+                return await interaction.editReply({ embeds: [replyEmbed] });
+            }
+        } else {
+            this.client.logger.log(
+                {
+                    message: `Attempted restricted permissions. { command: Fail Trialee, user: ${interaction.user.username}, channel: ${interaction.channel} }`,
                     handler: this.constructor.name,
                 },
                 true
