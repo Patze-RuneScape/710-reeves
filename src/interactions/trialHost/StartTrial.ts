@@ -124,11 +124,26 @@ export default class Pass extends BotInteraction {
 
         let errorMessage = '';
 
+        let finalDate = '';
+
         if (time) {
             const isValid = expression.test(time);
             if (!isValid) {
                 errorMessage += '\n\nThe trial `time` was not in the expected format.'
             }
+        } else {
+            const currentYear = new Date().getUTCFullYear();
+            const currentMonth = new Date().getUTCMonth();
+            const currentDate = new Date().getUTCDate();
+            const hours = region === 'North America' ? 1 : 20;
+            let finalDateObject;
+            if (region === 'North America') {
+                finalDateObject = new Date(Date.UTC(currentYear, currentMonth, currentDate + 1, hours, 0));
+            } else {
+                finalDateObject = new Date(Date.UTC(currentYear, currentMonth, currentDate, hours, 0));
+            }
+            finalDate = region === 'North America' ? finalDateObject.toISOString().substring(0, 16) : finalDateObject.toISOString().substring(0, 16);
+            finalDate = finalDate.replace('T', ' ');
         }
 
         const errorEmbed = new EmbedBuilder()
@@ -231,7 +246,8 @@ export default class Pass extends BotInteraction {
                     `\`Game Time:\` \`${time}\`
             \`Local Time:\` ${this.parseTime(time)}`
                     :
-                    `\`Time:\` \`ASAP\``}
+                    `\`Game Time:\` \`${finalDate}\`
+                    \`Time:\` ${this.parseTime(finalDate)}`}
             \`World:\` ${region}\n
             > **Trialee**\n
             \`Discord:\` <@${user.id}>
