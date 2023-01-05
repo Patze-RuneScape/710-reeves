@@ -118,7 +118,7 @@ export default class Pass extends BotInteraction {
         const trialType: string = interaction.options.getString('trialtype', true);
         const time: string | null = interaction.options.getString('time', false);
 
-        const { roles, colours, channels, emojis } = this.client.util;
+        const { colours, channels, emojis } = this.client.util;
 
         const expression = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})$/;
 
@@ -145,22 +145,17 @@ export default class Pass extends BotInteraction {
         const roleInfo = await this.getTrialledRole(interaction, role);
 
         let channelId: string;
-        let notifyRoleKey: string;
         if (region === 'German') {
             if (trialType === 'mock') {
                 channelId = channels.euMock;
-                notifyRoleKey = roles.pingEU;
             } else {
                 channelId = channels.euTrial;
-                notifyRoleKey = roles.pingEUTrial;
             }
         } else {
             if (trialType === 'mock') {
                 channelId = channels.naMock;
-                notifyRoleKey = roles.pingNA;
             } else {
                 channelId = channels.naTrial;
-                notifyRoleKey = roles.pingNATrial;
             }
         }
 
@@ -250,13 +245,13 @@ export default class Pass extends BotInteraction {
 
         const channel = await this.client.channels.fetch(channelId) as TextChannel;
         await channel.send(
-            { content: `${notifyRoleKey}`, embeds: [embed], components: [firstRow, secondRow, controlPanel] }
+            { embeds: [embed], components: [firstRow, secondRow, controlPanel] }
         )
 
         const replyEmbed = new EmbedBuilder()
             .setTitle('Trial card created!')
             .setColor(colours.discord.green)
-            .setDescription(`${notifyRoleKey} has been notified in <#${channelId}>`);
+            .setDescription(`Trial card has been posted in <#${channelId}>`);
         await interaction.editReply({ embeds: [replyEmbed] });
     }
 }
