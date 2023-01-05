@@ -20,7 +20,7 @@ export default class Pass extends BotInteraction {
     }
 
     get permissions() {
-        return 'TRIAL_TEAM';
+        return 'TRIAL_HOST';
     }
 
     get roleOptions() {
@@ -94,7 +94,6 @@ export default class Pass extends BotInteraction {
 
     public getTrialledRole = async (interaction: ChatInputCommandInteraction, roleKey: string): Promise<TrialledRole | undefined> => {
         const { roles, stripRole } = this.client.util;
-        console.log(roles[roleKey])
         if (!roles[roleKey]) return;
         const roleObject = await interaction.guild?.roles.fetch(stripRole(roles[roleKey])) as Role;
         return {
@@ -138,7 +137,6 @@ export default class Pass extends BotInteraction {
             .setDescription(errorMessage || 'No error message.');
         if (time) {
             const isValid = expression.test(time);
-            console.log(isValid)
             if (!isValid) {
                 return await interaction.editReply({ embeds: [errorEmbed] });
             }
