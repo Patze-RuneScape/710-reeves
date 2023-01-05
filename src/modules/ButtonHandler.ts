@@ -365,64 +365,39 @@ export default class ButtonHandler {
     }
 
     private async failTrialee(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
-        const { colours } = this.client.util;
-        await interaction.deferReply({ ephemeral: true });
-        const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
-        const messageEmbed: Embed = interaction.message.embeds[0];
-        const messageContent: string | undefined = messageEmbed.data.description;
-        const fields: APIEmbedField[] = messageEmbed.fields;
-        const hostExpression: RegExp = /\`Host:\` <@(\d+)>/;
-        const trialeeExpression: RegExp = /\`Discord:\` <@(\d+)>/;
-        const roleExpression: RegExp = /\`Tag:\` <@&(\d+)>/;
-        const replyEmbed: EmbedBuilder = new EmbedBuilder();
-        let userId: string = '';
-        let trialeeId: string = '';
-        let roleId: string = '';
-        if (messageContent) {
-            const hostMatches = messageContent.match(hostExpression);
-            const trialeeMatches = messageContent.match(trialeeExpression);
-            const roleMatches = messageContent.match(roleExpression);
-            userId = hostMatches ? hostMatches[1] : '';
-            trialeeId = trialeeMatches ? trialeeMatches[1] : '';
-            roleId = roleMatches ? roleMatches[1] : '';
-            if (!userId || !trialeeId || !roleId) {
-                // Should never really make it to this.
-                replyEmbed.setColor(colours.discord.red)
-                replyEmbed.setDescription('Host, Trialee or Tag could not be detected.')
-                return await interaction.editReply({ embeds: [replyEmbed] });
-            }
-        }
-        if (hasRolePermissions) {
-            const hasElevatedRole = await this.client.util.hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
-            if ((interaction.user.id === userId)|| hasElevatedRole) {
-                const splitResults = messageContent?.split('⬥');
-                if (!splitResults) {
-                    replyEmbed.setColor(colours.discord.red)
-                    replyEmbed.setDescription(`Message could not be parsed correctly.`)
-                    return await interaction.editReply({ embeds: [replyEmbed] });
-                }
-                const messageContentWithoutStarted = splitResults[0];
-                const dirtyStarted = splitResults[1];
-                const started = dirtyStarted?.replace('> **Team**', '').trim();
-                const newMessageContent = `${messageContentWithoutStarted}⬥ ${started}\n⬥ <@${trialeeId}> failed <t:${this.currentTime}:R>!\n\n> **Team**`;
+        const { hasOverridePermissions, hasRolePermissions } = this.client.util;
 
-                // Save trial to database.
-                await this.saveTrial(interaction, trialeeId, roleId, userId, fields);
+        const rolePermissions = await hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
+        const overridePermissions = await hasOverridePermissions(interaction, 'assign');
 
-                const newEmbed = new EmbedBuilder()
-                    .setColor(colours.discord.red)
-                    .setFields(fields)
-                    .setDescription(`${newMessageContent}`);
-                await interaction.message.edit({ content: '', embeds: [newEmbed], components: [] });
-                replyEmbed.setColor(colours.discord.green);
-                replyEmbed.setDescription(`Trialee failed!`);
-                return await interaction.editReply({ embeds: [replyEmbed] });
-            } else {
-                replyEmbed.setColor(colours.discord.red)
-                replyEmbed.setDescription(`Only <@${userId}> or an elevated role can fail this trialee.`)
-                return await interaction.editReply({ embeds: [replyEmbed] });
-            }
+        if (rolePermissions || overridePermissions) {
+            const modal = new ModalBuilder()
+                .setCustomId('failTrialee')
+                .setTitle('Fail Trialee');
+
+            // Create the text input components
+            const gemURL = new TextInputBuilder()
+                .setCustomId('gemURL')
+                .setLabel("Challenge Gem URL")
+                .setStyle(TextInputStyle.Short)
+                .setRequired(false);
+
+            const comments = new TextInputBuilder()
+                .setCustomId('comments')
+                .setLabel("Comments")
+                .setStyle(TextInputStyle.Paragraph)
+                .setRequired(false);
+
+            const firstActionRow = new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(gemURL);
+            const secondActionRow = new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(comments);
+
+            // Add inputs to the modal
+            modal.addComponents(firstActionRow, secondActionRow);
+
+            // Show the modal to the user
+            await interaction.showModal(modal);
         } else {
+            await interaction.deferReply({ ephemeral: true });
             this.client.logger.log(
                 {
                     message: `Attempted restricted permissions. { command: Fail Trialee, user: ${interaction.user.username}, channel: ${interaction.channel} }`,
