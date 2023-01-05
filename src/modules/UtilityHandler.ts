@@ -58,9 +58,9 @@ export default class UtilityHandler {
 
     get emojis(): Emojis {
         return {
-            gem1: '<:gem1:1060557891003744286>',
-            gem2: '<:gem2:1060557888998883328>',
-            gem3: '<:gem3:1060557886771708074>',
+            gem1: '<:gem1:1060561390349324319>',
+            gem2: '<:gem2:1060561385987248128>',
+            gem3: '<:gem3:1060561383021879366>',
             umbra: '<:umbra:1025086079319162880>',
             glacies: '<:glacies:1025086094775177297>',
             cruor: '<:cruor:1025085871772409937>',
