@@ -80,6 +80,8 @@ export default class UtilityHandler {
                 naTrial: '1057867192609275919',
                 euMock: '1057867192391192664',
                 euTrial: '1057867192609275918',
+                mockResult: '1057867192391192666',
+                trialResult: '1057867192609275921',
             }
         }
         return {
@@ -89,6 +91,8 @@ export default class UtilityHandler {
             naTrial: '1053834698654224474',
             euMock: '765479967114919937',
             euTrial: '1053834651791265792',
+            mockResult: '702083377066410002',
+            trialResult: '1053834770041282610',
         }
     }
 
