@@ -233,11 +233,12 @@ export default class ModalHandler {
     }
 
     private async failTrialee(interaction: ModalSubmitInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
-        const { colours } = this.client.util;
+        const { colours, channels } = this.client.util;
         await interaction.deferReply({ ephemeral: true });
         const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
-        const replyEmbed: EmbedBuilder = new EmbedBuilder();
         const messageEmbed = interaction.message?.embeds[0];
+        const trialType = this.getTrialType(interaction.message?.channel.id || channels.mockResult);
+        const replyEmbed: EmbedBuilder = new EmbedBuilder();
         if (!messageEmbed) {
             replyEmbed.setColor(colours.discord.red)
             replyEmbed.setDescription('No embed message detected.')
@@ -277,10 +278,48 @@ export default class ModalHandler {
                 const messageContentWithoutStarted = splitResults[0];
                 const dirtyStarted = splitResults[1];
                 const started = dirtyStarted?.replace('> **Team**', '').trim();
-                const newMessageContent = `${messageContentWithoutStarted}⬥ ${started}\n⬥ <@${trialeeId}> failed <t:${this.currentTime}:R>!\n\n> **Team**`;
+                const newMessageContent = `${messageContentWithoutStarted}⬥ ${started}\n⬥ <@${trialeeId}> ${trialType === 'mock' ? 'is not ready for trial' : 'failed'} <t:${this.currentTime}:R>!\n\n> **Team**`;
 
                 // Save trial to database.
                 await this.saveTrial(interaction, trialeeId, roleId, userId, fields);
+
+                const resultChannelId = this.trialResultChannels(interaction.message?.channel.id || channels.mockResult);
+
+                const resultChannel = await this.client.channels.fetch(resultChannelId) as TextChannel;
+
+                const gemURL = interaction.fields.getTextInputValue('gemURL');
+	            const comments = interaction.fields.getTextInputValue('comments');
+
+                const resultEmbed: EmbedBuilder = new EmbedBuilder();
+                resultEmbed.setColor(colours.discord.red)
+                resultEmbed.setDescription(`
+                > **General**\n
+                **Discord:** <@${trialeeId}>
+                **Tag:** <@&${roleId}>
+                ${trialType === 'mock' ? '**Ready for Trial:**' : '**Passed:**'} ❌\n
+                ${comments ? `> **Notes**\n\n${comments}\n` : ''}
+                > **Team**
+                `)
+                resultEmbed.setFields(fields)
+                
+                await resultChannel.send({
+                    content: `> **${trialType === 'mock' ? 'Mock Trial' : 'Trial'} hosted by <@${userId}>** on <t:${this.currentTime}:D>`,
+                    embeds: [resultEmbed],
+                    allowedMentions: {
+                        users: [],
+                        roles: []
+                    }
+                });
+
+                if (gemURL) {
+                    await resultChannel.send({
+                        content: gemURL,
+                        allowedMentions: {
+                            users: [],
+                            roles: []
+                        }
+                    });
+                };
 
                 const newEmbed = new EmbedBuilder()
                     .setColor(colours.discord.red)
@@ -292,7 +331,7 @@ export default class ModalHandler {
                 return await interaction.editReply({ embeds: [replyEmbed] });
             } else {
                 replyEmbed.setColor(colours.discord.red)
-                replyEmbed.setDescription(`Only <@${userId}> or an elevated role can fail this trialee.`)
+                replyEmbed.setDescription(`Only <@${userId}> or an elevated role can pass this trialee.`)
                 return await interaction.editReply({ embeds: [replyEmbed] });
             }
         } else {
