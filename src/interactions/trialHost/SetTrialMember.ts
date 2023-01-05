@@ -7,7 +7,7 @@ export default class SetTrialMember extends BotInteraction {
     }
 
     get description() {
-        return 'Overrides and sets a specific role on a Trial Card (i.e. Reservations, Tryouts, Fillers). Must be run in the same channel as the card.';
+        return 'Overrides and sets a specific role on a Trial Card (i.e. Reservations, Tryouts, Fillers)';
     }
 
     get permissions() {
