@@ -36,6 +36,7 @@ export default class SetTrialMember extends BotInteraction {
             'Default': 'Default',
             'Tryout': 'Tryout',
             'Filler': 'Filler',
+            'Remove Member': 'Remove',
         }
         const options: any = [];
         Object.keys(assignOptions).forEach((key: string) => {
@@ -94,10 +95,12 @@ export default class SetTrialMember extends BotInteraction {
 
         currentFields.forEach(field => {
             if (field.name.includes(role)) {
-                if (fillerType !== 'Default'){
-                    field.value = `<@${user.id}> (${fillerType})`;
-                } else {
+                if (fillerType === 'Default'){
                     field.value = `<@${user.id}>`;
+                } else if (fillerType === 'Remove') {
+                    field.value = `Empty`;
+                } else {
+                    field.value = `<@${user.id}> (${fillerType})`;
                 }
             }
         })
@@ -107,9 +110,9 @@ export default class SetTrialMember extends BotInteraction {
         await message.edit({embeds: [newEmbed]});
 
         const replyEmbed = new EmbedBuilder()
-            .setTitle('Member successfully assigned!')
+            .setTitle(`Member successfully ${fillerType !== 'Remove' ? 'assigned' : 'removed'}!`)
             .setColor(colours.discord.green)
-            .setDescription(`<@${user.id}> successfully assigned to **${role}**${fillerType !== 'Default' ? ` as **${fillerType}**` : ''}.`);
+            .setDescription(`<@${user.id}> successfully ${fillerType !== 'Remove' ? `assigned to **${role}** as **${fillerType}**` : `removed from **${role}**`}.`);
         await interaction.editReply({ embeds: [replyEmbed] });
     }
 }
