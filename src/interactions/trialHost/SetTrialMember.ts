@@ -34,6 +34,7 @@ export default class SetTrialMember extends BotInteraction {
     get memberTypeOptions() {
         const assignOptions: any = {
             'Default': 'Default',
+            'Trialee': 'Trialee',
             'Tryout': 'Tryout',
             'Filler': 'Filler',
             'Remove Member': 'Remove',
@@ -98,7 +99,7 @@ export default class SetTrialMember extends BotInteraction {
                 if (fillerType === 'Default'){
                     field.value = `<@${user.id}>`;
                 } else if (fillerType === 'Remove') {
-                    field.value = `Empty`;
+                    field.value = `\`Empty\``;
                 } else {
                     field.value = `<@${user.id}> (${fillerType})`;
                 }
