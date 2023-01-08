@@ -1,4 +1,4 @@
-import { ModalSubmitInteraction, InteractionResponse, Message, APIEmbedField, EmbedBuilder, TextChannel } from 'discord.js';
+import { ModalSubmitInteraction, InteractionResponse, Message, APIEmbedField, EmbedBuilder, TextChannel, Role, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import { Trial } from '../entity/Trial';
 import { TrialParticipation } from '../entity/TrialParticipation';
 import Bot from '../Bot';
@@ -58,7 +58,7 @@ export default class ModalHandler {
 
     public assignRole = async (interaction: ModalSubmitInteraction<'cached'>, roleId: string, trialeeId: string) => {
         
-        const { roles, stripRole } = this.client.util;
+        const { roles, colours, channels, stripRole } = this.client.util;
         
         const trialee = await interaction.guild?.members.fetch(trialeeId);
         const trialeeRoles = await trialee?.roles.cache.map(role => role.id) || [];
@@ -74,6 +74,44 @@ export default class ModalHandler {
         }
 
         await trialee?.roles.add(roleId);
+
+        let embedColour = colours.discord.green;
+        const roleObject = await interaction.guild?.roles.fetch(roleId) as Role;
+        embedColour = roleObject.color;
+
+        let returnedMessage = {
+            id: '',
+            url: ''
+        };
+
+        const channel = await this.client.channels.fetch(channels.achievementsAndLogs) as TextChannel;
+
+        const embed = new EmbedBuilder()
+            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() || this.client.user?.avatarURL() || 'https://cdn.discordapp.com/attachments/1027186342620299315/1054206984360050709/445px-Reeves_pet.png' })
+            .setTimestamp()
+            .setColor(embedColour)
+            .setDescription(`Congratulations to <@${trialeeId}> on achieving <@&${roleId}>!`);
+        if (channel) await channel.send({ embeds: [embed] }).then(message => {
+            returnedMessage.id = message.id;
+            returnedMessage.url = message.url;
+        });
+
+        const logChannel = await this.client.channels.fetch(channels.botRoleLog) as TextChannel;
+        const buttonRow = new ActionRowBuilder<ButtonBuilder>()
+            .addComponents(
+                new ButtonBuilder()
+                    .setCustomId('rejectRoleAssign')
+                    .setLabel('Reject Approval')
+                    .setStyle(ButtonStyle.Danger),
+            );
+        const logEmbed = new EmbedBuilder()
+            .setTimestamp()
+            .setColor(embedColour)
+            .setDescription(`
+            <@&${roleId}> was assigned to <@${trialeeId}> by <@${interaction.user.id}>.
+            **Message**: [${returnedMessage.id}](${returnedMessage.url})
+            `);
+        await logChannel.send({ embeds: [logEmbed], components: [buttonRow] });
     }
 
     public async saveTrial(interaction: ModalSubmitInteraction<'cached'>, trialeeId: string, roleId: string, userId: string, fields: APIEmbedField[]): Promise<void> {
