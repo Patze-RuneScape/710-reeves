@@ -20,8 +20,8 @@ dist/
 *.pub
 copy.sh
 connect.sh
-*config.json
 config.json
+config-prod.json
 *.ppk
 *.pem
 db.json
