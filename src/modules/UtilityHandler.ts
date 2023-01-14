@@ -23,6 +23,10 @@ interface Emojis {
     [emojiName: string]: string;
 }
 
+interface Messages {
+    [messageId: string]: string;
+}
+
 interface Categories {
     killCount: string[]
     collectionLog: string[]
@@ -82,6 +86,7 @@ export default class UtilityHandler {
                 euTrial: '1057867192609275918',
                 mockResult: '1057867192391192666',
                 trialResult: '1057867192609275921',
+                mockInfo: '1063488766498578563',
             }
         }
         return {
@@ -93,7 +98,23 @@ export default class UtilityHandler {
             euTrial: '1053834651791265792',
             mockResult: '702083377066410002',
             trialResult: '1053834770041282610',
+            mockInfo: '1062976399280984114',
         }
+    }
+
+    get messages(): Messages {
+        if (process.env.ENVIRONMENT === 'DEVELOPMENT') {
+            return {
+                mockTrialReacts: '1063729249460174858',
+            }
+        }
+        return {
+            mockTrialReacts: '1063488856097312839',
+        }
+    }
+
+    get guildId(): string {
+        return process.env.ENVIRONMENT === 'DEVELOPMENT' ? '1057867190579253329' : '315710189762248705';
     }
 
     get roles(): Roles {
@@ -139,7 +160,10 @@ export default class UtilityHandler {
                 pingNATrial: '<@&1057867190608597065>',
                 pingEU: '<@&1057867190608597069>',
                 pingEUTrial: '<@&1057867190608597066>',
-                vulner: '<@&1053715273947037769>',
+                pingOffHour: '<@&1057867190608597067>',
+                pingOffHourTrial: '<@&1057867190608597064>',
+                vulner: '<@&1063738043997098006>',
+                mockInfo: '<@&1063488766498578563>',
             }
         }
         return {
@@ -183,7 +207,10 @@ export default class UtilityHandler {
             pingNATrial: '<@&1050233459274158193>',
             pingEU: '<@&959522492593098762>',
             pingEUTrial: '<@&1050262078147022908>',
+            pingOffHour: '<@&959523032672641055>',
+            pingOffHourTrial: '<@&1053836146104344587>',
             vulner: '<@&1063144624912351342>',
+            mockInfo: '<@&1062976399280984114>',
         }
     }
 

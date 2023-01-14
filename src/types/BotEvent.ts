@@ -8,7 +8,7 @@ export default interface BotEvent {
     get name(): string;
     get fireOnce(): boolean;
     get enabled(): boolean;
-    run(args: unknown | unknown[]): Promise<void>;
+    run(args: unknown | unknown[], args2?: unknown | unknown[]): Promise<void>;
 }
 
 export default class BotEvent extends EventEmitter {
@@ -22,9 +22,13 @@ export default class BotEvent extends EventEmitter {
         });
     }
 
-    exec(...args: any) {
+    exec(args: any, args2?: any) {
         const _args = args.length ? args.shift() : args;
         type EmittedError = typeof Object;
-        this.run(_args).catch((error: EmittedError) => this.emit('error', error));
+        if (args2) {
+            this.run(_args, args2).catch((error: EmittedError) => this.emit('error', error));
+        } else {
+            this.run(_args).catch((error: EmittedError) => this.emit('error', error));
+        }
     }
 }
