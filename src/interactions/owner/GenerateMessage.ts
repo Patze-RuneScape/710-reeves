@@ -17,7 +17,7 @@ export default class Eval extends BotInteraction {
 
     get messageOptions() {
         const assignOptions: any = {
-            'Mock Trial Reacts': 'mockReacts'
+            'Trial Reacts': 'mockReacts'
         }
         const options: any = [];
         Object.keys(assignOptions).forEach((key: string) => {
@@ -47,7 +47,7 @@ export default class Eval extends BotInteraction {
         switch (feature) {
             case 'mockReacts':
                 const infoEmbed = new EmbedBuilder()
-                    .setTitle('Mock Trial Reaction Pings')
+                    .setTitle('Trial Reaction Pings')
                     .setColor(colours.gold)
                     .setDescription(`
                         > React to the roles below to add or remove the following roles:\n

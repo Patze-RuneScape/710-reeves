@@ -50,7 +50,8 @@ export default class Cosmetic extends BotInteraction {
             '40k KC': 'kc40k',
             '50k KC': 'kc50k',
             '60k KC': 'kc60k',
-            '70k KC': 'kc70k'
+            '70k KC': 'kc70k',
+            'Nex AoD FC Member': 'nexAodFCMember',
         }
         const options: any = [];
         Object.keys(assignOptions).forEach((key: string) => {

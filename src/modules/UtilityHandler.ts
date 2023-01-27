@@ -81,11 +81,11 @@ export default class UtilityHandler {
                 achievementsAndLogs: '1058275396208054402',
                 botRoleLog: '1058275602060288101',
                 naMock: '1057867192391192665',
-                naTrial: '1057867192609275919',
+                naTrial: '1057867192391192665',
                 euMock: '1057867192391192664',
-                euTrial: '1057867192609275918',
+                euTrial: '1057867192391192664',
                 mockResult: '1057867192391192666',
-                trialResult: '1057867192609275921',
+                trialResult: '1057867192391192666',
                 mockInfo: '1063488766498578563',
             }
         }
@@ -93,11 +93,11 @@ export default class UtilityHandler {
             achievementsAndLogs: '1058373790289109092',
             botRoleLog: '1058373508314431528',
             naMock: '954775172609630218',
-            naTrial: '1053834698654224474',
+            naTrial: '954775172609630218',
             euMock: '765479967114919937',
-            euTrial: '1053834651791265792',
+            euTrial: '765479967114919937',
             mockResult: '702083377066410002',
-            trialResult: '1053834770041282610',
+            trialResult: '702083377066410002',
             mockInfo: '1062976399280984114',
         }
     }
@@ -151,7 +151,6 @@ export default class UtilityHandler {
                 mrHammer: '<@&1057867190625390621>',
                 mrBase: '<@&1057867190625390620>',
                 cdar: '<@&1057867190650540088>',
-                mockTrialFiller: '<@&1057867190637953031>',
                 trialTeam: '<@&1057867190650540089>',
                 applicationTeam: '<@&1057867190684110884>',
                 sevenMan: '<@&1057867190650540084>',
@@ -164,6 +163,7 @@ export default class UtilityHandler {
                 pingOffHourTrial: '<@&1057867190608597064>',
                 vulner: '<@&1063738043997098006>',
                 mockInfo: '<@&1063488766498578563>',
+                nexAodFCMember: '<@&1057867190608597070>',
             }
         }
         return {
@@ -198,7 +198,6 @@ export default class UtilityHandler {
             mrHammer: '<@&1021479839003312168>',
             mrBase: '<@&1021476019284213860>',
             cdar: '<@&814177068467224596>',
-            mockTrialFiller: '<@&724464712217264208>',
             trialTeam: '<@&469546608531472385>',
             applicationTeam: '<@&968901102911246377>',
             sevenMan: '<@&337723869508927489>',
@@ -211,6 +210,7 @@ export default class UtilityHandler {
             pingOffHourTrial: '<@&1053836146104344587>',
             vulner: '<@&1063144624912351342>',
             mockInfo: '<@&1062976399280984114>',
+            nexAodFCMember: '<@&644269097558867968>',
         }
     }
 

@@ -74,7 +74,7 @@ export default class ButtonHandler {
         const { colours, checkForUserId, getEmptyObject, getTeamCount } = this.client.util;
 
         await interaction.deferReply({ ephemeral: true });
-        const hasRolePermissions = await this.client.util.hasRolePermissions(this.client, ['trialTeam', 'mockTrialFiller'], interaction);
+        const hasRolePermissions = await this.client.util.hasRolePermissions(this.client, ['trialTeam', 'organizer', 'admin'], interaction);
         if (hasRolePermissions) {
             const messageEmbed = interaction.message.embeds[0];
             const messageContent = messageEmbed.data.description;

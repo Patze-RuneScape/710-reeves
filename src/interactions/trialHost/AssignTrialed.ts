@@ -28,7 +28,6 @@ export default class Trialed extends BotInteraction {
             'Magic/Range Base': 'mrBase',
             'Vulner': 'vulner',
             'Can Do All Roles': 'cdar',
-            'Mock Trial Filler': 'mockTrialFiller',
             'Trial Team': 'trialTeam',
         }
         const options: any = [];
@@ -53,7 +52,7 @@ export default class Trialed extends BotInteraction {
         const userResponse: User = interaction.options.getUser('user', true);
         const role: string = interaction.options.getString('role', true);
 
-        const { roles, colours, channels, stripRole} = this.client.util;
+        const { roles, colours, channels, stripRole } = this.client.util;
 
         const channel = await this.client.channels.fetch(channels.achievementsAndLogs) as TextChannel;
 
