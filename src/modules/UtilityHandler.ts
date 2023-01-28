@@ -86,7 +86,7 @@ export default class UtilityHandler {
                 euTrial: '1057867192391192664',
                 mockResult: '1057867192391192666',
                 trialResult: '1057867192391192666',
-                mockInfo: '1063488766498578563',
+                mockInfo: '1068881120319504486',
             }
         }
         return {
@@ -98,7 +98,7 @@ export default class UtilityHandler {
             euTrial: '765479967114919937',
             mockResult: '702083377066410002',
             trialResult: '702083377066410002',
-            mockInfo: '1062976399280984114',
+            mockInfo: '1068881120319504486',
         }
     }
 
