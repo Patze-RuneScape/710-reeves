@@ -164,6 +164,8 @@ export default class UtilityHandler {
                 vulner: '<@&1063738043997098006>',
                 mockInfo: '<@&1063488766498578563>',
                 nexAodFCMember: '<@&1057867190608597070>',
+                totm: '<@&1057867190684110888>',
+                lhfotm: '<@&1057867190684110887>',
             }
         }
         return {
@@ -211,6 +213,8 @@ export default class UtilityHandler {
             vulner: '<@&1063144624912351342>',
             mockInfo: '<@&1062976399280984114>',
             nexAodFCMember: '<@&644269097558867968>',
+            totm: '<@&693668983064363069>',
+            lhfotm: '<@&959566081368948816>',
         }
     }
 
