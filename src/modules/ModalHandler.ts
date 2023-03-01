@@ -5,11 +5,6 @@ import Bot from '../Bot';
 
 export default interface ModalHandler { client: Bot; id: string; interaction: ModalSubmitInteraction }
 
-interface TrialChannels {
-    mock: string[];
-    real: string[];
-}
-
 export default class ModalHandler {
     constructor(client: Bot, id: string, interaction: ModalSubmitInteraction<'cached'>) {
         this.client = client;
@@ -30,36 +25,10 @@ export default class ModalHandler {
         return Math.round(Date.now() / 1000)
     }
 
-    public getTrialType = (channelId: string) => {
-        const { channels } = this.client.util;
-        const trialChannels: TrialChannels = {
-            mock: [channels.naMock, channels.euMock],
-            real: [channels.naTrial, channels.euTrial]
-        }
-        if (trialChannels.mock.includes(channelId)) {
-            return 'mock';
-        } else {
-            return 'real';
-        }
-    }
-
-    public trialResultChannels = (channelId: string) => {
-        const { channels } = this.client.util;
-        const trialChannels: TrialChannels = {
-            mock: [channels.naMock, channels.euMock],
-            real: [channels.naTrial, channels.euTrial]
-        }
-        if (trialChannels.mock.includes(channelId)) {
-            return channels.mockResult;
-        } else {
-            return channels.trialResult;
-        }
-    }
-
     public assignRole = async (interaction: ModalSubmitInteraction<'cached'>, roleId: string, trialeeId: string) => {
-        
+
         const { roles, colours, channels, stripRole } = this.client.util;
-        
+
         const trialee = await interaction.guild?.members.fetch(trialeeId);
         const trialeeRoles = await trialee?.roles.cache.map(role => role.id) || [];
 
@@ -153,7 +122,6 @@ export default class ModalHandler {
         await interaction.deferReply({ ephemeral: true });
         const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
         const messageEmbed = interaction.message?.embeds[0];
-        const trialType = this.getTrialType(interaction.message?.channel.id || channels.mockResult);
         const replyEmbed: EmbedBuilder = new EmbedBuilder();
         if (!messageEmbed) {
             replyEmbed.setColor(colours.discord.red)
@@ -163,22 +131,26 @@ export default class ModalHandler {
         const messageContent: string | undefined = messageEmbed.data.description;
         const fields: APIEmbedField[] = messageEmbed.fields;
         const hostExpression: RegExp = /\`Host:\` <@(\d+)>/;
+        const trialTypeExpression: RegExp = /\`Type:\` (.+) Trial/;
         const trialeeExpression: RegExp = /\`Discord:\` <@(\d+)>/;
         const roleExpression: RegExp = /\`Tag:\` <@&(\d+)>/;
         let userId: string = '';
         let trialeeId: string = '';
+        let trialType: string = '';
         let roleId: string = '';
         if (messageContent) {
             const hostMatches = messageContent.match(hostExpression);
             const trialeeMatches = messageContent.match(trialeeExpression);
+            const trialTypeMatches = messageContent.match(trialTypeExpression);
             const roleMatches = messageContent.match(roleExpression);
             userId = hostMatches ? hostMatches[1] : '';
             trialeeId = trialeeMatches ? trialeeMatches[1] : '';
+            trialType = trialTypeMatches ? trialTypeMatches[1] : '';
             roleId = roleMatches ? roleMatches[1] : '';
-            if (!userId || !trialeeId || !roleId) {
+            if (!userId || !trialeeId || !roleId || !trialType) {
                 // Should never really make it to this.
                 replyEmbed.setColor(colours.discord.red)
-                replyEmbed.setDescription('Host, Trialee or Tag could not be detected.')
+                replyEmbed.setDescription('Host, Trialee, Trial Type or Tag could not be detected.')
                 return await interaction.editReply({ embeds: [replyEmbed] });
             }
         }
@@ -194,23 +166,23 @@ export default class ModalHandler {
                 const messageContentWithoutStarted = splitResults[0];
                 const dirtyStarted = splitResults[1];
                 const started = dirtyStarted?.replace('> **Team**', '').trim();
-                const newMessageContent = `${messageContentWithoutStarted}⬥ ${started}\n⬥ <@${trialeeId}> ${trialType === 'mock' ? 'is ready for trial' : 'successfully passed'} <t:${this.currentTime}:R>!\n\n> **Team**`;
+                const newMessageContent = `${messageContentWithoutStarted}⬥ ${started}\n⬥ <@${trialeeId}> ${trialType.includes('Mock') ? 'is ready for trial' : 'successfully passed'} <t:${this.currentTime}:R>!\n\n> **Team**`;
 
                 // Save trial to database.
                 await this.saveTrial(interaction, trialeeId, roleId, userId, fields);
 
                 // Give the trialee the correct role if real trial.
-                if (trialType === 'real') {
+                if (trialType.includes('Real')) {
                     await this.assignRole(interaction, roleId, trialeeId);
                 }
 
-                const resultChannelId = this.trialResultChannels(interaction.message?.channel.id || channels.mockResult);
+                const resultChannelId = channels.mockResult;
 
                 const resultChannel = await this.client.channels.fetch(resultChannelId) as TextChannel;
 
 
                 const gemURL = interaction.fields.getTextInputValue('gemURL');
-	            const comments = interaction.fields.getTextInputValue('comments');
+                const comments = interaction.fields.getTextInputValue('comments');
 
                 const resultEmbed: EmbedBuilder = new EmbedBuilder();
                 resultEmbed.setColor(colours.discord.green)
@@ -218,14 +190,14 @@ export default class ModalHandler {
                 > **General**\n
                 **Discord:** <@${trialeeId}>
                 **Tag:** <@&${roleId}>
-                ${trialType === 'mock' ? '**Ready for Trial:**' : '**Passed:**'} ✅\n
+                ${trialType.includes('Mock') ? '**Ready for Trial:**' : '**Passed:**'} ✅\n
                 ${comments ? `> **Notes**\n\n${comments}\n` : ''}
                 > **Team**
                 `)
                 resultEmbed.setFields(fields)
-                
+
                 await resultChannel.send({
-                    content: `> **${trialType === 'mock' ? 'Mock Trial' : 'Trial'} hosted by <@${userId}>** on <t:${this.currentTime}:D>`,
+                    content: `> **${trialType.includes('Mock') ? 'Mock Trial' : 'Trial'} hosted by <@${userId}>** on <t:${this.currentTime}:D>`,
                     embeds: [resultEmbed],
                     allowedMentions: {
                         users: [],
@@ -275,7 +247,6 @@ export default class ModalHandler {
         await interaction.deferReply({ ephemeral: true });
         const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
         const messageEmbed = interaction.message?.embeds[0];
-        const trialType = this.getTrialType(interaction.message?.channel.id || channels.mockResult);
         const replyEmbed: EmbedBuilder = new EmbedBuilder();
         if (!messageEmbed) {
             replyEmbed.setColor(colours.discord.red)
@@ -285,22 +256,26 @@ export default class ModalHandler {
         const messageContent: string | undefined = messageEmbed.data.description;
         const fields: APIEmbedField[] = messageEmbed.fields;
         const hostExpression: RegExp = /\`Host:\` <@(\d+)>/;
+        const trialTypeExpression: RegExp = /\`Type:\` (.+) Trial/;
         const trialeeExpression: RegExp = /\`Discord:\` <@(\d+)>/;
         const roleExpression: RegExp = /\`Tag:\` <@&(\d+)>/;
         let userId: string = '';
         let trialeeId: string = '';
+        let trialType: string = '';
         let roleId: string = '';
         if (messageContent) {
             const hostMatches = messageContent.match(hostExpression);
             const trialeeMatches = messageContent.match(trialeeExpression);
+            const trialTypeMatches = messageContent.match(trialTypeExpression);
             const roleMatches = messageContent.match(roleExpression);
             userId = hostMatches ? hostMatches[1] : '';
             trialeeId = trialeeMatches ? trialeeMatches[1] : '';
+            trialType = trialTypeMatches ? trialTypeMatches[1] : '';
             roleId = roleMatches ? roleMatches[1] : '';
-            if (!userId || !trialeeId || !roleId) {
+            if (!userId || !trialeeId || !roleId || !trialType) {
                 // Should never really make it to this.
                 replyEmbed.setColor(colours.discord.red)
-                replyEmbed.setDescription('Host, Trialee or Tag could not be detected.')
+                replyEmbed.setDescription('Host, Trialee, Trial Type or Tag could not be detected.')
                 return await interaction.editReply({ embeds: [replyEmbed] });
             }
         }
@@ -316,17 +291,17 @@ export default class ModalHandler {
                 const messageContentWithoutStarted = splitResults[0];
                 const dirtyStarted = splitResults[1];
                 const started = dirtyStarted?.replace('> **Team**', '').trim();
-                const newMessageContent = `${messageContentWithoutStarted}⬥ ${started}\n⬥ <@${trialeeId}> ${trialType === 'mock' ? 'is not ready for trial' : 'failed'} <t:${this.currentTime}:R>!\n\n> **Team**`;
+                const newMessageContent = `${messageContentWithoutStarted}⬥ ${started}\n⬥ <@${trialeeId}> ${trialType.includes('Mock') ? 'is not ready for trial' : 'failed'} <t:${this.currentTime}:R>!\n\n> **Team**`;
 
                 // Save trial to database.
                 await this.saveTrial(interaction, trialeeId, roleId, userId, fields);
 
-                const resultChannelId = this.trialResultChannels(interaction.message?.channel.id || channels.mockResult);
+                const resultChannelId = channels.mockResult;
 
                 const resultChannel = await this.client.channels.fetch(resultChannelId) as TextChannel;
 
                 const gemURL = interaction.fields.getTextInputValue('gemURL');
-	            const comments = interaction.fields.getTextInputValue('comments');
+                const comments = interaction.fields.getTextInputValue('comments');
 
                 const resultEmbed: EmbedBuilder = new EmbedBuilder();
                 resultEmbed.setColor(colours.discord.red)
@@ -334,14 +309,14 @@ export default class ModalHandler {
                 > **General**\n
                 **Discord:** <@${trialeeId}>
                 **Tag:** <@&${roleId}>
-                ${trialType === 'mock' ? '**Ready for Trial:**' : '**Passed:**'} ❌\n
+                ${trialType.includes('Mock') ? '**Ready for Trial:**' : '**Passed:**'} ❌\n
                 ${comments ? `> **Notes**\n\n${comments}\n` : ''}
                 > **Team**
                 `)
                 resultEmbed.setFields(fields)
-                
+
                 await resultChannel.send({
-                    content: `> **${trialType === 'mock' ? 'Mock Trial' : 'Trial'} hosted by <@${userId}>** on <t:${this.currentTime}:D>`,
+                    content: `> **${trialType.includes('Mock') ? 'Mock Trial' : 'Trial'} hosted by <@${userId}>** on <t:${this.currentTime}:D>`,
                     embeds: [resultEmbed],
                     allowedMentions: {
                         users: [],

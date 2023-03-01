@@ -72,7 +72,8 @@ export default class Pass extends BotInteraction {
         return {
             base: ['magicBase', 'mrBase'],
             umbra: ['magicUmbra', 'rangeUmbra'],
-            cruor: ['magicMT', 'rangeMT', 'mrMT'],
+            glacies: ['mrMT'],
+            cruor: ['magicMT', 'rangeMT'],
             hammer: ['chinner', 'mrHammer'],
         }
     }
@@ -137,12 +138,12 @@ export default class Pass extends BotInteraction {
             const currentYear = new Date().getUTCFullYear();
             const currentMonth = new Date().getUTCMonth();
             const currentDate = new Date().getUTCDate();
-            const hours = region === 'North America' ? 1 : 20;
+            const hours = region === 'North America' ? 1 : 19;
             let finalDateObject;
             if (region === 'North America') {
                 finalDateObject = new Date(Date.UTC(currentYear, currentMonth, currentDate + 1, hours, 0));
             } else {
-                finalDateObject = new Date(Date.UTC(currentYear, currentMonth, currentDate, hours, 0));
+                finalDateObject = new Date(Date.UTC(currentYear, currentMonth, currentDate, hours, 45));
             }
             finalDate = region === 'North America' ? finalDateObject.toISOString().substring(0, 16) : finalDateObject.toISOString().substring(0, 16);
             finalDate = finalDate.replace('T', ' ');
@@ -228,15 +229,29 @@ export default class Pass extends BotInteraction {
             return this.categories[category].includes(role) ? `<@${user.id}> (Trialee)` : '`Empty`';
         }
 
-        const fields = [
-            { name: `${emojis.voke} Base`, value: checkRole('base'), inline: true },
-            { name: `${emojis.umbra} Umbra`, value: checkRole('umbra'), inline: true },
-            { name: `${emojis.glacies} Glacies`, value: '`Empty`', inline: true },
-            { name: `${emojis.cruor} Cruor`, value: checkRole('cruor'), inline: true },
-            { name: `${emojis.fumus} Fumus`, value: '`Empty`', inline: true },
-            { name: `${emojis.hammer} Hammer`, value: checkRole('hammer'), inline: true },
-            { name: `${emojis.freedom} Free`, value: '`Empty`', inline: true },
-        ]
+        let fields;
+
+        if (role === 'mrMT') {
+            fields = [
+                { name: `${emojis.voke} Base`, value: checkRole('base'), inline: true },
+                { name: `${emojis.umbra} Umbra`, value: checkRole('umbra'), inline: true },
+                { name: `${emojis.glacies} Glacies`, value: checkRole('glacies'), inline: true },
+                { name: `${emojis.cruor} Cruor`, value: '`Empty`', inline: true },
+                { name: `${emojis.fumus} Fumus`, value: '`Empty`', inline: true },
+                { name: `${emojis.hammer} Hammer`, value: checkRole('hammer'), inline: true },
+                { name: `${emojis.freedom} Free`, value: '`Empty`', inline: true },
+            ]
+        } else {
+            fields = [
+                { name: `${emojis.voke} Base`, value: checkRole('base'), inline: true },
+                { name: `${emojis.umbra} Umbra`, value: checkRole('umbra'), inline: true },
+                { name: `${emojis.glacies} Glacies`, value: '`Empty`', inline: true },
+                { name: `${emojis.cruor} Cruor`, value: checkRole('cruor'), inline: true },
+                { name: `${emojis.fumus} Fumus`, value: '`Empty`', inline: true },
+                { name: `${emojis.hammer} Hammer`, value: checkRole('hammer'), inline: true },
+                { name: `${emojis.freedom} Free`, value: '`Empty`', inline: true },
+            ]
+        }
 
         const embed = new EmbedBuilder()
             .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() || this.client.user?.avatarURL() || 'https://media.discordapp.net/attachments/1027186342620299315/1047598720834875422/618px-Solly_pet_1.png' })
@@ -244,6 +259,7 @@ export default class Pass extends BotInteraction {
             .setDescription(`
             > **General**\n
             \`Host:\` <@${interaction.user.id}>
+            \`Type:\` ${trialType === 'mock' ? 'Mock Trial' : 'Real Trial'}
             ${time ?
                     `\`Game Time:\` \`${time}\`
             \`Local Time:\` ${this.parseTime(time)}`
