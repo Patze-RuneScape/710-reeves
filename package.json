@@ -13,7 +13,7 @@
         "bufferutil": "^4.0.5",
         "count-interval": "^1.0.1",
         "discord-api-types": "^0.37.8",
-        "discord.js": "^14.6.0",
+        "discord.js": "^14.8.0",
         "dotenv": "^16.0.2",
         "indomitable": "^2.0.2",
         "petitio": "^1.4.0",

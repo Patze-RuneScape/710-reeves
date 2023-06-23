@@ -166,6 +166,7 @@ export default class UtilityHandler {
                 nexAodFCMember: '<@&1057867190608597070>',
                 totm: '<@&1057867190684110888>',
                 lhfotm: '<@&1057867190684110887>',
+                mvp: '<@&1121739029583511614>',
             }
         }
         return {
@@ -215,6 +216,7 @@ export default class UtilityHandler {
             nexAodFCMember: '<@&644269097558867968>',
             totm: '<@&693668983064363069>',
             lhfotm: '<@&959566081368948816>',
+            mvp: '<@&1121739029583511614>',
         }
     }
 
