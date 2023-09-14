@@ -35,6 +35,9 @@ export default class Pass extends BotInteraction {
             'Magic/Range Minion Tank': 'mrMT',
             'Magic/Range Hammer': 'mrHammer',
             'Magic/Range Base': 'mrBase',
+            'Necromancy Base': 'necroBase',
+            'Necromancy Hammer': 'necroHammer',
+            'Necromancy Minion Tank': 'necroMT',
             'Vulner': 'vulner',
         }
         const options: any = [];
@@ -72,7 +75,7 @@ export default class Pass extends BotInteraction {
         return {
             base: ['magicBase', 'mrBase'],
             umbra: ['magicUmbra', 'rangeUmbra'],
-            glacies: ['mrMT'],
+            glacies: ['mrMT', 'necroMT'],
             cruor: ['magicMT', 'rangeMT'],
             hammer: ['chinner', 'mrHammer'],
         }
