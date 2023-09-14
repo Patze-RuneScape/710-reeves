@@ -234,7 +234,7 @@ export default class Pass extends BotInteraction {
 
         let fields;
 
-        if (role === 'mrMT') {
+        if (role === 'mrMT' || role === 'necroMT') {
             fields = [
                 { name: `${emojis.voke} Base`, value: checkRole('base'), inline: true },
                 { name: `${emojis.umbra} Umbra`, value: checkRole('umbra'), inline: true },
