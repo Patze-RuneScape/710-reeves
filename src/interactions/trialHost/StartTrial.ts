@@ -73,11 +73,11 @@ export default class Pass extends BotInteraction {
 
     get categories(): Categories {
         return {
-            base: ['magicBase', 'mrBase'],
+            base: ['magicBase', 'mrBase', 'necroBase'],
             umbra: ['magicUmbra', 'rangeUmbra'],
             glacies: ['mrMT', 'necroMT'],
             cruor: ['magicMT', 'rangeMT'],
-            hammer: ['chinner', 'mrHammer'],
+            hammer: ['chinner', 'mrHammer', 'necroHammer'],
         }
     }
 
