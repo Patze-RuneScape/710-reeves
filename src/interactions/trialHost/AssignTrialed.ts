@@ -84,6 +84,12 @@ export default class Trialed extends BotInteraction {
             await user?.roles.add(stripRole(roles.sevenMan));
         }
 
+        // Add tt probation if adding tt
+        if (roleId == stripRole(roles.trialTeam)
+            && !userRoles?.includes(stripRole(roles.trialTeamProbation))) {
+            await user?.roles.add(stripRole(roles.trialTeamProbation));
+        }
+
         let returnedMessage = {
             id: '',
             url: ''

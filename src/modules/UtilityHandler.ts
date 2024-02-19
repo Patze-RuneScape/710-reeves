@@ -206,6 +206,7 @@ export default class UtilityHandler {
             mrBase: '<@&1021476019284213860>',
             cdar: '<@&814177068467224596>',
             trialTeam: '<@&469546608531472385>',
+            trialTeamProbation: '<@&1074057253314908190>',
             applicationTeam: '<@&968901102911246377>',
             sevenMan: '<@&337723869508927489>',
             trialeeTeacher: '<@&664351536583016459>',
