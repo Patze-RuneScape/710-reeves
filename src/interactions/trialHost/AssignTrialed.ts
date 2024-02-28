@@ -33,6 +33,7 @@ export default class Trialed extends BotInteraction {
             'Vulner': 'vulner',
             'Can Do All Roles': 'cdar',
             'Trial Team': 'trialTeam',
+            'Remove Trial Team Probation': 'trialTeamProbation',
         }
         const options: any = [];
         Object.keys(assignOptions).forEach((key: string) => {
@@ -82,6 +83,18 @@ export default class Trialed extends BotInteraction {
         // Add 7-Man tag
         if (!userRoles?.includes(stripRole(roles.sevenMan))) {
             await user?.roles.add(stripRole(roles.sevenMan));
+        }
+
+        // Add tt probation if adding tt
+        if (roleId == stripRole(roles.trialTeam)
+            && !userRoles?.includes(stripRole(roles.trialTeamProbation))) {
+            await user?.roles.add(stripRole(roles.trialTeamProbation));
+        }
+
+        // Allow removal of tt probation
+        if (roleId == stripRole(roles.trialTeamProbation)
+            && userRoles?.includes(stripRole(roles.trialTeamProbation))) {
+            await user?.roles.remove(stripRole(roles.trialTeamProbation));
         }
 
         let returnedMessage = {
