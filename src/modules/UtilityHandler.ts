@@ -171,6 +171,7 @@ export default class UtilityHandler {
                 necroBase: '<@&1142304996495470682>',
                 necroHammer: '<@&1149840318053757032>',
                 necroFree: '<@&1142305270765199450>',
+                fourMan: '<@1226182671663763466>',
             }
         }
         return {
@@ -226,6 +227,7 @@ export default class UtilityHandler {
             necroBase: '<@&1142304996495470682>',
             necroHammer: '<@&1149840318053757032>',
             necroFree: '<@&1142305270765199450>',
+            fourMan: '<@1226182671663763466>',
         }
     }
 
