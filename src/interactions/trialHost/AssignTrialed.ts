@@ -33,7 +33,7 @@ export default class Trialed extends BotInteraction {
             'Vulner': 'vulner',
             'Can Do All Roles': 'cdar',
             'Trial Team': 'trialTeam',
-            'Remove Trial Team Probation': 'trialTeamProbation',
+            'Trial Team Probation': 'trialTeamProbation',
         }
         const options: any = [];
         Object.keys(assignOptions).forEach((key: string) => {
@@ -65,6 +65,7 @@ export default class Trialed extends BotInteraction {
         const userRoles = await user?.roles.cache.map(role => role.id) || [];
 
         let sendMessage = false;
+        let sendPublic = true;
         const roleObject = await interaction.guild?.roles.fetch(stripRole(roles[role])) as Role;
         let embedColour = colours.discord.green;
 
@@ -73,6 +74,11 @@ export default class Trialed extends BotInteraction {
         embedColour = roleObject.color;
         if (!(userRoles?.includes(roleId))) {
             sendMessage = true;
+        }
+
+        // Don't send in public achievement channel if tt probation
+        if (roleId == stripRole(roles.trialTeamProbation)){
+            sendPublic = false;
         }
 
         // Remove trialee
@@ -85,14 +91,8 @@ export default class Trialed extends BotInteraction {
             await user?.roles.add(stripRole(roles.sevenMan));
         }
 
-        // Add tt probation if adding tt
+        // Remove tt probation if adding tt
         if (roleId == stripRole(roles.trialTeam)
-            && !userRoles?.includes(stripRole(roles.trialTeamProbation))) {
-            await user?.roles.add(stripRole(roles.trialTeamProbation));
-        }
-
-        // Allow removal of tt probation
-        if (roleId == stripRole(roles.trialTeamProbation)
             && userRoles?.includes(stripRole(roles.trialTeamProbation))) {
             await user?.roles.remove(stripRole(roles.trialTeamProbation));
         }
@@ -107,7 +107,7 @@ export default class Trialed extends BotInteraction {
             .setTimestamp()
             .setColor(embedColour)
             .setDescription(`Congratulations to <@${userResponse.id}> on achieving ${roles[role]}!`);
-        if (sendMessage && channel) await channel.send({ embeds: [embed] }).then(message => {
+        if (sendMessage && channel && sendPublic) await channel.send({ embeds: [embed] }).then(message => {
             returnedMessage.id = message.id;
             returnedMessage.url = message.url;
         });
