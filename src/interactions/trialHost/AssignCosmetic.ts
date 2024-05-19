@@ -24,7 +24,7 @@ export default class Cosmetic extends BotInteraction {
     get hierarchy(): Hierarchy {
         return {
             collectionLog: ['ofThePraesul', 'goldenPraesul'],
-            killCount: ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k']
+            killCount: ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k', 'kc80k', 'kc90k']
         }
     }
 
@@ -36,6 +36,8 @@ export default class Cosmetic extends BotInteraction {
             'kc50k': ['kc10k', 'kc20k', 'kc30k', 'kc40k'],
             'kc60k': ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k'],
             'kc70k': ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k'],
+            'kc80k': ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k'],
+            'kc90k': ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k', 'kc80k'],
             'goldenPraesul': ['ofThePraesul']
         }
     }
@@ -51,6 +53,8 @@ export default class Cosmetic extends BotInteraction {
             '50k KC': 'kc50k',
             '60k KC': 'kc60k',
             '70k KC': 'kc70k',
+            '80k KC': 'kc80k',
+            '90k KC': 'kc90k',
             'Nex AoD FC Member': 'nexAodFCMember',
         }
         const options: any = [];
