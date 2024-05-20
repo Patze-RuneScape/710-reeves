@@ -191,7 +191,7 @@ export default class InteractionHandler extends EventEmitter {
                         }
                         break;
                     case 'TRIAL_TEAM':
-                        if (!(await this.client.util.hasRolePermissions(this.client, ['trialTeam', 'trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction))) {
+                        if (!(await this.client.util.hasRolePermissions(this.client, ['trialTeamProbation', 'trialTeam', 'trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction))) {
                             this.client.logger.log(
                                 {
                                     message: `Attempted restricted permissions. { command: ${command.name}, user: ${interaction.user.username}, channel: ${interaction.channel} }`,
