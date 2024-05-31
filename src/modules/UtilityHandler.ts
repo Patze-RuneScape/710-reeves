@@ -174,6 +174,18 @@ export default class UtilityHandler {
                 necroHammer: '<@&1149840318053757032>',
                 necroFree: '<@&1142305270765199450>',
                 fourMan: '<@1226182671663763466>',
+                fallenAngel: '<@&1243319612632727602>',
+                nightmareOfNihils: '<@&1243319682669351003>',
+                elementalist: '<@&1243319748314267648>',
+                sageOfElements: '<@&1243319812428533893>',
+                masterOfElements: '<@&1243319871618678784>',
+                smokeDemon: '<@&1243319946176630805>',
+                shadowCackler: '<@&1243320011389534209>',
+                truebornVampyre: '<@&1243320074660614185>',
+                glacyteOfLeng: '<@&1243320133968203857>',
+                praetorianLibrarian: '<@&1243320189211377685>',
+                coreRupted: '<@&1243337593882542222>',
+                ollivandersSupplier: '<@&1243337779039965234>',
             }
         }
         return {
@@ -232,13 +244,26 @@ export default class UtilityHandler {
             necroHammer: '<@&1149840318053757032>',
             necroFree: '<@&1142305270765199450>',
             fourMan: '<@1226182671663763466>',
+            fallenAngel: '<@&1243319612632727602>',
+            nightmareOfNihils: '<@&1243319682669351003>',
+            elementalist: '<@&1243319748314267648>',
+            sageOfElements: '<@&1243319812428533893>',
+            masterOfElements: '<@&1243319871618678784>',
+            smokeDemon: '<@&1243319946176630805>',
+            shadowCackler: '<@&1243320011389534209>',
+            truebornVampyre: '<@&1243320074660614185>',
+            glacyteOfLeng: '<@&1243320133968203857>',
+            praetorianLibrarian: '<@&1243320189211377685>',
+            coreRupted: '<@&1243337593882542222>',
+            ollivandersSupplier: '<@&1243337779039965234>',
         }
     }
 
     get categories(): Categories {
         return {
-            killCount: ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k'],
-            collectionLog: ['ofThePraesul', 'goldenPraesul'],
+            killCount: ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k', 'kc80k', 'kc90k'],
+            collectionLog: ['ofThePraesul', 'goldenPraesul'],            
+            vanity: ['fallenAngel', 'nightmareOfNihils', 'elementalist', 'sageOfElements', 'masterOfElements', 'smokeDemon', 'shadowCackler', 'truebornVampyre', 'glacyteOfLeng', 'praetorianLibrarian', 'coreRupted', 'ollivandersSupplier'],
         }
     }
 
@@ -256,6 +281,8 @@ export default class UtilityHandler {
             category = 'killCount';
         } else if (this.categories.collectionLog.includes(role)) {
             category = 'collectionLog';
+        } else if (this.categories.vanity.includes(role)) {            
+            category = 'vanity';
         } else {
             category = ''
         }
@@ -263,7 +290,7 @@ export default class UtilityHandler {
     }
 
     public categorizeChannel = (role: string) => {
-        if (this.categories.killCount.includes(role) || this.categories.collectionLog.includes(role)) {
+        if (this.categories.killCount.includes(role) || this.categories.collectionLog.includes(role) || this.categories.vanity.includes(role)) {
             return 'achievementsAndLogs'
         } else {
             return ''

@@ -24,7 +24,8 @@ export default class Cosmetic extends BotInteraction {
     get hierarchy(): Hierarchy {
         return {
             collectionLog: ['ofThePraesul', 'goldenPraesul'],
-            killCount: ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k', 'kc80k', 'kc90k']
+            killCount: ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k', 'kc80k', 'kc90k'],
+            vanity: ['fallenAngel', 'nightmareOfNihils', 'elementalist', 'sageOfElements', 'masterOfElements', 'smokeDemon', 'shadowCackler', 'truebornVampyre', 'glacyteOfLeng', 'praetorianLibrarian', 'coreRupted', 'ollivandersSupplier'],
         }
     }
 
@@ -56,6 +57,18 @@ export default class Cosmetic extends BotInteraction {
             '80k KC': 'kc80k',
             '90k KC': 'kc90k',
             'Nex AoD FC Member': 'nexAodFCMember',
+            'Fallen Angel': 'fallenAngel',
+            'Nightmare of Nihils': 'nightmareOfNihils',
+            'The Elementalist': 'elementalist',
+            'Sage of the Elements': 'sageOfElements',
+            'Master of the Elements': 'masterOfElements',
+            'Smoke Demon': 'smokeDemon',
+            'Shadow Cackler': 'shadowCackler',
+            'Trueborn Vampyre': 'truebornVampyre',
+            'Glacyte of Leng': 'glacyteOfLeng',
+            'Praetorian Librarian': 'praetorianLibrarian',
+            'Core-rupted': 'coreRupted',
+            'Ollivander\'s Supplier': 'ollivandersSupplier',
         }
         const options: any = [];
         Object.keys(assignOptions).forEach((key: string) => {
@@ -96,7 +109,7 @@ export default class Cosmetic extends BotInteraction {
 
         const hasHigherRole = (role: string) => {
             try {
-                if (!categorize(role)) return false;
+                if (!categorize(role) || categorize(role) === 'vanity' || categorize(role) === '') return false;                
                 const categorizedHierarchy = this.hierarchy[categorize(role)];
                 const sliceFromIndex: number = categorizedHierarchy.indexOf(role) + 1;
                 const hierarchyList = categorizedHierarchy.slice(sliceFromIndex);
@@ -150,10 +163,10 @@ export default class Cosmetic extends BotInteraction {
         const logEmbed = new EmbedBuilder()
             .setTimestamp()
             .setColor(embedColour)
-            .setDescription(`
+            .setDescription(channel ? `
             ${roles[role]} was assigned to <@${userResponse.id}> by <@${interaction.user.id}>.
             **Message**: [${returnedMessage.id}](${returnedMessage.url})
-            `);
+            ` : `${roles[role]} was assigned to <@${userResponse.id}> by <@${interaction.user.id}>.`);
         if (sendMessage) await logChannel.send({ embeds: [logEmbed], components: [buttonRow] });
 
         const replyEmbed = new EmbedBuilder()

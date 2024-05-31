@@ -123,10 +123,10 @@ export default class Trialed extends BotInteraction {
         const logEmbed = new EmbedBuilder()
             .setTimestamp()
             .setColor(embedColour)
-            .setDescription(`
+            .setDescription(channel ? `
             ${roles[role]} was assigned to <@${userResponse.id}> by <@${interaction.user.id}>.
             **Message**: [${returnedMessage.id}](${returnedMessage.url})
-            `);
+            ` : `${roles[role]} was assigned to <@${userResponse.id}> by <@${interaction.user.id}>.`);
         if (sendMessage) await logChannel.send({ embeds: [logEmbed], components: [buttonRow] });
 
         const replyEmbed = new EmbedBuilder()
