@@ -3,7 +3,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder, User, Role, TextChann
 
 export default class ApproveFourMan extends BotInteraction {
     get name() {
-        return 'approve-4-Man';
+        return 'approve-4-man';
     }
 
     get description() {
