@@ -38,6 +38,7 @@ export default class SetTrialMember extends BotInteraction {
             'Tryout': 'Tryout',
             'Filler': 'Filler',
             'Remove Member': 'Remove',
+            'Override Host': 'Host',
         }
         const options: any = [];
         Object.keys(assignOptions).forEach((key: string) => {
@@ -88,15 +89,29 @@ export default class SetTrialMember extends BotInteraction {
         // Errors passed, now assign to the correct role as override.
         // Clone the embed completely
 
+        let description: string = message.embeds[0].description ? message.embeds[0].description : '';
+        //check if host changed
+        if (fillerType === 'Host'){
+            let userId: string = '';
+            const expression: RegExp = /\`Host:\` <@(\d+)>/;
+            if (description){
+                const matches = description.match(expression);
+                userId = matches ? matches[1] : '';
+                if (userId != user.id){
+                    description = description.replace(`\`Host:\` <@${userId}>`, `\`Host:\` <@${user.id}>`);                    
+                }
+            }
+        }
+
         const newEmbed = new EmbedBuilder()
             .setColor(message.embeds[0].color)
-            .setDescription(message.embeds[0].description);
+            .setDescription(description);
 
         const currentFields = message.embeds[0].fields;
 
         currentFields.forEach(field => {
             if (field.name.includes(role)) {
-                if (fillerType === 'Default'){
+                if (fillerType === 'Default' || fillerType === 'Host'){
                     field.value = `<@${user.id}>`;
                 } else if (fillerType === 'Remove') {
                     field.value = `\`Empty\``;
