@@ -30,6 +30,7 @@ interface Messages {
 interface Categories {
     killCount: string[]
     collectionLog: string[]
+    vanity: string[]
 }
 
 export default class UtilityHandler {

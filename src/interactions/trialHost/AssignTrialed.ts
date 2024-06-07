@@ -31,7 +31,7 @@ export default class Trialed extends BotInteraction {
             'Necromancy Minion Tank': 'necroMT',
             //'Free Necromancy': 'necroFree',
             //'Vulner': 'vulner',
-            'Can Do All Roles': 'cdar',
+            //'Can Do All Roles': 'cdar',
             'Trial Team': 'trialTeam',
             'Trial Team Probation': 'trialTeamProbation',
         }
