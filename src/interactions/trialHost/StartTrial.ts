@@ -26,10 +26,8 @@ export default class Pass extends BotInteraction {
     get roleOptions() {
         const assignOptions: any = {
             'Magic Minion Tank': 'magicMT',
-            //'Free Magic': 'magicFree',
             'Magic Base': 'magicBase',
             'Range Minion Tank': 'rangeMT',
-            //'Free Range': 'rangeFree',
             'Range Base': 'rangeBase',
             'Range Hammer': 'chinner',
             'Magic/Range Minion Tank': 'mrMT',
@@ -38,7 +36,6 @@ export default class Pass extends BotInteraction {
             'Necromancy Base': 'necroBase',
             'Necromancy Hammer': 'necroHammer',
             'Necromancy Minion Tank': 'necroMT',
-            //'Vulner': 'vulner',
         }
         const options: any = [];
         Object.keys(assignOptions).forEach((key: string) => {
@@ -74,9 +71,7 @@ export default class Pass extends BotInteraction {
     get categories(): Categories {
         return {
             base: ['magicBase', 'mrBase', 'necroBase'],
-            umbra: ['magicUmbra', 'rangeUmbra'],
-            glacies: ['mrMT', 'necroMT'],
-            cruor: ['magicMT', 'rangeMT'],
+            glacies: ['mrMT', 'necroMT', 'rangeMT', 'magicMT'],
             hammer: ['chinner', 'mrHammer', 'necroHammer'],
         }
     }
@@ -141,12 +136,17 @@ export default class Pass extends BotInteraction {
             const currentYear = new Date().getUTCFullYear();
             const currentMonth = new Date().getUTCMonth();
             const currentDate = new Date().getUTCDate();
-            const hours = region === 'North America' ? 1 : 19;
+
+            //Check if UTC 19 is 21 in Middle-Europe, if not add one hour
+            //NA is fix 23:59
+            //EU is 19 during summer time and 20 during winter time
+            const hours = new Date(Date.UTC(currentYear, currentMonth, currentDate, 19, 0)).toLocaleString('de-DE', {hour: '2-digit',   hour12: false, timeZone: 'Europe/Berlin' }).substring(0, 2) == '21' ? 19 : 20;            
+
             let finalDateObject;
             if (region === 'North America') {
-                finalDateObject = new Date(Date.UTC(currentYear, currentMonth, currentDate + 1, hours, 0));
+                finalDateObject = new Date(Date.UTC(currentYear, currentMonth, currentDate, 23, 59));
             } else {
-                finalDateObject = new Date(Date.UTC(currentYear, currentMonth, currentDate, hours, 45));
+                finalDateObject = new Date(Date.UTC(currentYear, currentMonth, currentDate, hours, 0));
             }
             finalDate = region === 'North America' ? finalDateObject.toISOString().substring(0, 16) : finalDateObject.toISOString().substring(0, 16);
             finalDate = finalDate.replace('T', ' ');
@@ -234,27 +234,15 @@ export default class Pass extends BotInteraction {
 
         let fields;
 
-        if (role === 'mrMT' || role === 'necroMT') {
-            fields = [
-                { name: `${emojis.voke} Base`, value: checkRole('base'), inline: true },
-                { name: `${emojis.umbra} Umbra`, value: checkRole('umbra'), inline: true },
-                { name: `${emojis.glacies} Glacies`, value: checkRole('glacies'), inline: true },
-                { name: `${emojis.cruor} Cruor`, value: '`Empty`', inline: true },
-                { name: `${emojis.fumus} Fumus`, value: '`Empty`', inline: true },
-                { name: `${emojis.hammer} Hammer`, value: checkRole('hammer'), inline: true },
-                { name: `${emojis.freedom} Free`, value: '`Empty`', inline: true },
-            ]
-        } else {
-            fields = [
-                { name: `${emojis.voke} Base`, value: checkRole('base'), inline: true },
-                { name: `${emojis.umbra} Umbra`, value: checkRole('umbra'), inline: true },
-                { name: `${emojis.glacies} Glacies`, value: '`Empty`', inline: true },
-                { name: `${emojis.cruor} Cruor`, value: checkRole('cruor'), inline: true },
-                { name: `${emojis.fumus} Fumus`, value: '`Empty`', inline: true },
-                { name: `${emojis.hammer} Hammer`, value: checkRole('hammer'), inline: true },
-                { name: `${emojis.freedom} Free`, value: '`Empty`', inline: true },
-            ]
-        }
+        fields = [
+            { name: `${emojis.voke} Base`, value: checkRole('base'), inline: true },
+            { name: `${emojis.umbra} Umbra`, value: '`Empty`', inline: true },
+            { name: `${emojis.glacies} Glacies`, value: checkRole('glacies'), inline: true },
+            { name: `${emojis.cruor} Cruor`, value: '`Empty`', inline: true },
+            { name: `${emojis.fumus} Fumus`, value: '`Empty`', inline: true },
+            { name: `${emojis.hammer} Hammer`, value: checkRole('hammer'), inline: true },
+            { name: `${emojis.freedom} Free`, value: '`Empty`', inline: true },
+        ]
 
         const embed = new EmbedBuilder()
             .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() || this.client.user?.avatarURL() || 'https://media.discordapp.net/attachments/1027186342620299315/1047598720834875422/618px-Solly_pet_1.png' })
@@ -265,10 +253,10 @@ export default class Pass extends BotInteraction {
             \`Type:\` ${trialType === 'mock' ? 'Mock Trial' : 'Real Trial'}
             ${time ?
                     `\`Game Time:\` \`${time}\`
-            \`Local Time:\` ${this.parseTime(time)}`
+                    \`Local Time:\` ${this.parseTime(time)}`
                     :
                     `\`Game Time:\` \`${finalDate}\`
-                    \`Time:\` ${this.parseTime(finalDate)}`}
+                    \`Local Time:\` ${this.parseTime(finalDate)}`}
             \`World:\` ${region}\n
             > **Trialee**\n
             \`Discord:\` <@${user.id}>
