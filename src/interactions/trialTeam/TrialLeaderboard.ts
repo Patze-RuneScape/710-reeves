@@ -16,8 +16,29 @@ export default class TrialLeaderboard extends BotInteraction {
         return 'TRIAL_TEAM';
     }
 
+    get timespanOptions() {
+        const timespanTypes: any = {
+            'Current Month': 'currentMonth',
+            'Last Month': 'lastMonth',
+            'Last 3 Months': 'lastThreeMonths',
+            'Current Year': 'currentYear',
+            'Last Year': 'lastYear',
+            'All Time': 'allTime',
+        }
+        const options: any = [];
+        Object.keys(timespanTypes).forEach((key: string) => {
+            options.push({ name: key, value: timespanTypes[key] })
+        })
+        return options;
+    }
+
     get slashData() {
-        return new SlashCommandBuilder().setName(this.name).setDescription(this.description);
+        return new SlashCommandBuilder()
+            .setName(this.name)
+            .setDescription(this.description)
+            .addStringOption((option) => option.setName('timespan').setDescription('Time Span').addChoices(
+                ...this.timespanOptions
+            ).setRequired(false));
     }
 
     public createFieldFromArray = (array: any[]) => {
@@ -49,6 +70,57 @@ export default class TrialLeaderboard extends BotInteraction {
         await interaction.deferReply({ ephemeral: false });
         const { dataSource } = this.client;
         const { colours, roles } = this.client.util;
+        let timespan: string | null = interaction.options.getString('timespan', false);
+
+        if (timespan == null){
+            timespan = 'currentMonth';
+        }
+
+        let dateFrom: Date;
+        let dateTo: Date;
+        let timestamp: Date = new Date();
+        let description: String;
+
+        switch(timespan){
+            case 'currentMonth':{
+                dateFrom = new Date(timestamp.getFullYear(), timestamp.getMonth(), 1, 0, 0, 0);
+                dateTo = new Date(timestamp.getFullYear(), timestamp.getMonth(), timestamp.getDate(), 23, 59, 59);
+                description = 'Current Month';
+                break;
+            }
+            case 'lastMonth':{
+                timestamp.setDate(0);
+                dateFrom = new Date(timestamp.getFullYear(), timestamp.getMonth(), 1, 0, 0, 0);
+                dateTo = new Date(timestamp.getFullYear(), timestamp.getMonth(), timestamp.getDate(), 23, 59, 59);
+                description = 'Last Month';
+                break;
+            }
+            case 'lastThreeMonths':{
+                dateTo = new Date(timestamp.getFullYear(), timestamp.getMonth(), timestamp.getDate(), 23, 59, 59);                
+                timestamp.setMonth(timestamp.getMonth() - 3);
+                dateFrom = new Date(timestamp.getFullYear(), timestamp.getMonth(), timestamp.getDate(), 0, 0, 0);
+                description = 'Last 3 Months';
+                break;
+            }
+            case 'currentYear':{
+                dateFrom = new Date(timestamp.getFullYear(), 1, 1, 0, 0, 0);
+                dateTo = new Date(timestamp.getFullYear(), 12, 31, 23, 59, 59);
+                description = 'Current Year';
+                break;
+            }
+            case 'lastYear':{
+                dateFrom = new Date(timestamp.getFullYear() - 1, 1, 1, 0, 0, 0);
+                dateTo = new Date(timestamp.getFullYear() - 1, 12, 31, 23, 59, 59);
+                description = 'Last Year';
+                break;
+            }
+            default:{
+                dateFrom = new Date(2000, 1, 1, 0, 0, 0);
+                dateTo = new Date(2099, 31, 12, 23, 59, 59);
+                description = 'All Time';
+                break;
+            }
+        }
 
         // Get top 10 Trials hosted members
         const trialsHosted = await dataSource.createQueryBuilder()
@@ -56,6 +128,7 @@ export default class TrialLeaderboard extends BotInteraction {
             .addSelect('COUNT(*)', 'count')
             .from(Trial, 'trial')
             .groupBy('trial.host')
+            .having(`trial.createdAt BETWEEN :dateFrom AND :dateTo`, {dateFrom, dateTo})
             .orderBy('count', 'DESC')
             .getRawMany();
 
@@ -65,6 +138,7 @@ export default class TrialLeaderboard extends BotInteraction {
             .addSelect('COUNT(*)', 'count')
             .from(TrialParticipation, 'trialParticipation')
             .groupBy('trialParticipation.participant')
+            .having(`trialParticipation.createdAt BETWEEN :dateFrom AND :dateTo`, {dateFrom, dateTo})
             .orderBy('count', 'DESC')
             .getRawMany();
 
@@ -76,7 +150,7 @@ export default class TrialLeaderboard extends BotInteraction {
 
         const embed = new EmbedBuilder()
             .setTimestamp()
-            .setTitle('Trial Team Leaderboard')
+            .setTitle(`Trial Team Leaderboard (${description})`)
             .setColor(colours.gold)
             .setDescription(`> There has been **${totalTrials}** trial${totalTrials !== 1 ? 's' : ''} recorded and **${trialsParticipated.length}** unique ${roles.trialTeam} members!`)
             .addFields(
