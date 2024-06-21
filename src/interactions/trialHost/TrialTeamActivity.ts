@@ -35,9 +35,8 @@ export default class TrialLeaderboard extends BotInteraction {
         const { roles, colours, stripRole } = this.client.util;
         const time: string | null = interaction.options.getString('time', false);
 
-        // By default check for older than 4 weeks
-        const timestamp: number = Date.now() - 2419200000;        
-        let date: Date = new Date(timestamp);
+        // By default check for older than 3 months
+        let date: Date = new Date(new Date().setMonth(new Date().getMonth() - 3));
         if (time != null){
             date = this.parseTime(time);
         }        
