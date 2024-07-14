@@ -1,5 +1,5 @@
 import BotInteraction from '../../types/BotInteraction';
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder, User } from 'discord.js';
 import { TrialParticipation } from '../../entity/TrialParticipation';
 
 export default class TrialLeaderboard extends BotInteraction {
@@ -19,7 +19,8 @@ export default class TrialLeaderboard extends BotInteraction {
         return new SlashCommandBuilder()
             .setName(this.name)
             .setDescription(this.description)
-            .addStringOption((option) => option.setName('time').setDescription('Time since last trial. Must be in the format YYYY-MM-DD HH:MM in Gametime. e.g. 2022-11-05 06:00').setRequired(false));
+            .addStringOption((option) => option.setName('time').setDescription('Time since last trial. Must be in the format YYYY-MM-DD HH:MM in Gametime. e.g. 2022-11-05 06:00').setRequired(false))
+            .addUserOption((option) => option.setName('user').setDescription('User').setRequired(false));
     }
 
     public parseTime = (timeString: string): Date => {
@@ -34,6 +35,8 @@ export default class TrialLeaderboard extends BotInteraction {
         const { dataSource } = this.client;
         const { roles, colours, stripRole } = this.client.util;
         const time: string | null = interaction.options.getString('time', false);
+        const userResponse: User = interaction.options.getUser('user', true);
+        const user = await interaction.guild?.members.fetch(userResponse.id);
 
         // By default check for older than 3 months
         let date: Date = new Date(new Date().setMonth(new Date().getMonth() - 3));
@@ -41,48 +44,93 @@ export default class TrialLeaderboard extends BotInteraction {
             date = this.parseTime(time);
         }        
         
-        // Get all trial team members who haven't attended a trial since the date
-        const trialParticipants = await dataSource.createQueryBuilder()
-            .select('trialParticipation.participant', 'user')            
-            .addSelect('COUNT(*)', 'count')
-            .addSelect('MAX(trialParticipation.createdAt)', 'lastTrial')
-            .from(TrialParticipation, 'trialParticipation')
-            .groupBy('trialParticipation.participant')
-            .having(`MAX(trialParticipation.createdAt) < :date`, {date})
-            .orderBy('lastTrial', 'ASC')
-            .getRawMany();
-        
-        let nameList: any[] = [];
-        let dateList: any[] = [];
-        let countList: any[] = [];
-        
-        if (trialParticipants.length > 0){
-            for (const trialParticipant of trialParticipants){
-                const user = await interaction.guild?.members.fetch(trialParticipant.user);
-                const userRoles = await user?.roles.cache.map(role => role.id) || [];
-                
-                // Don't list if user has no longer Trial Team or Trial Team - Probation
-                if (userRoles?.includes(stripRole(roles.trialTeam)) || userRoles?.includes(stripRole(roles.trialTeamProbation)) || userRoles?.includes(stripRole(roles.trialHost))){
-                    nameList.push(`⬥ <@${trialParticipant.user}>`);
-                    dateList.push(trialParticipant.lastTrial);
-                    countList.push(trialParticipant.count);
-                }
-            }            
-        }        
+        let embed = new EmbedBuilder();
+        if (user == null){
+            // Get all trial team members who haven't attended a trial since the date
+            const trialParticipants = await dataSource.createQueryBuilder()
+                .select('trialParticipation.participant', 'user')            
+                .addSelect('COUNT(*)', 'count')
+                .addSelect('MAX(trialParticipation.createdAt)', 'lastTrial')
+                .from(TrialParticipation, 'trialParticipation')
+                .groupBy('trialParticipation.participant')
+                .having(`MAX(trialParticipation.createdAt) < :date`, {date})
+                .orderBy('lastTrial', 'ASC')
+                .getRawMany();
+            
+            let nameList: any[] = [];
+            let dateList: any[] = [];
+            let countList: any[] = [];
+            
+            if (trialParticipants.length > 0){
+                for (const trialParticipant of trialParticipants){
+                    const user = await interaction.guild?.members.fetch(trialParticipant.user);
+                    const userRoles = await user?.roles.cache.map(role => role.id) || [];
+                    
+                    // Don't list if user has no longer Trial Team or Trial Team - Probation
+                    if (userRoles?.includes(stripRole(roles.trialTeam)) || userRoles?.includes(stripRole(roles.trialTeamProbation)) || userRoles?.includes(stripRole(roles.trialHost))){
+                        nameList.push(`⬥ <@${trialParticipant.user}>`);
+                        dateList.push(trialParticipant.lastTrial);
+                        countList.push(trialParticipant.count);
+                    }
+                }            
+            }        
 
-        const embed = new EmbedBuilder()
-            .setTimestamp()
-            .setTitle('Trial Team Inactivity List')
-            .setColor(colours.gold)
-            .setDescription(`The following members haven't attented a trial since <t:${Math.round(date.getTime() / 1000)}:f>:`);
-        
-        if (nameList.length > 0){
-            for (let i = 0; i < Math.floor(nameList.length / 10) + 1; i++) {
-                embed.addFields( 
-                    { name: 'Member', value: nameList.slice(10 * i, (10 * i) + 10).join(`\n`), inline: true } ,
-                    { name: 'Last Trial', value: dateList.slice(10 * i, (10 * i) + 10).join(`\n`), inline: true } ,
-                    { name: 'Total Trials', value: countList.slice(10 * i, (10 * i) + 10).join(`\n`), inline: true }                    
-                );
+            embed = new EmbedBuilder()
+                .setTimestamp()
+                .setTitle('Trial Team Inactivity List')
+                .setColor(colours.gold)
+                .setDescription(`The following members haven't attented a trial since <t:${Math.round(date.getTime() / 1000)}:f>:`);
+            
+            const size: number = 10;
+            if (nameList.length > 0){
+                for (let i = 0; i < Math.floor(nameList.length / size) + 1; i++) {
+                    embed.addFields( 
+                        { name: 'Member', value: nameList.slice(size * i, (size * i) + size).join(`\n`), inline: true } ,
+                        { name: 'Last Trial', value: dateList.slice(size * i, (size * i) + size).join(`\n`), inline: true } ,
+                        { name: 'Total Trials', value: countList.slice(size * i, (size * i) + size).join(`\n`), inline: true }                    
+                    );
+                }
+            }
+            
+        } else{
+            const userid: string = userResponse.id;
+            
+            //Query trials of given user
+            const trials = await dataSource.createQueryBuilder(TrialParticipation, 'trialParticipation')                
+                .innerJoinAndSelect('trialParticipation.trial', 'trial')
+                .addSelect('trialParticipation.participant', 'user')
+                .addSelect('trial.link', 'link')
+                .addSelect('trial.createdAt', 'date')
+                .where('trial.createdAt > :date', {date})
+                .andWhere(`trialParticipation.participant = :user`, { user: userid})
+                .orderBy('date', 'DESC')
+                .getRawMany();
+
+            const count = trials.length;
+            let linkList: any[] = [];
+            let dateList: any[] = [];
+
+            if (count > 0){
+                for (const trial of trials){
+                    linkList.push(trial.link);
+                    dateList.push(trial.date);
+                }
+            }
+
+            embed = new EmbedBuilder()
+                .setTimestamp()
+                .setTitle('Trial Team Inactivity List')
+                .setColor(colours.gold)
+                .setDescription(`Attended Trials from <@${userResponse.id}> since <t:${Math.round(date.getTime() / 1000)}:f>:`);
+
+            const size: number = 15;
+            if (linkList.length > 0){
+                for (let i = 0; i < Math.floor(linkList.length / size) + 1; i++) {
+                    embed.addFields( 
+                        { name: 'Trial Card Link', value: linkList.slice(size * i, (size * i) + size).join(`\n`), inline: true } ,
+                        { name: 'Trial Date', value: dateList.slice(size * i, (size * i) + size).join(`\n`), inline: true } ,                        
+                    );
+                }
             }
         }
 

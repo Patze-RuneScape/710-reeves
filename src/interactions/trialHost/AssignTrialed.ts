@@ -17,10 +17,8 @@ export default class Trialed extends BotInteraction {
     get options() {
         const assignOptions: any = {
             'Magic Minion Tank': 'magicMT',
-            //'Free Magic': 'magicFree',
             'Magic Base': 'magicBase',
             'Range Minion Tank': 'rangeMT',
-            //'Free Range': 'rangeFree',
             'Range Base': 'rangeBase',
             'Range Hammer': 'chinner',
             'Magic/Range Minion Tank': 'mrMT',
@@ -29,9 +27,6 @@ export default class Trialed extends BotInteraction {
             'Necromancy Base': 'necroBase',
             'Necromancy Hammer': 'necroHammer',
             'Necromancy Minion Tank': 'necroMT',
-            //'Free Necromancy': 'necroFree',
-            //'Vulner': 'vulner',
-            //'Can Do All Roles': 'cdar',
             'Trial Team': 'trialTeam',
             'Trial Team Probation': 'trialTeamProbation',
         }

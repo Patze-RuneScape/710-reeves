@@ -1,10 +1,6 @@
 import BotInteraction from '../../types/BotInteraction';
 import { ChatInputCommandInteraction, SlashCommandBuilder, User, Role, TextChannel, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 
-interface Hierarchy {
-    [key: string]: string[];
-}
-
 interface RemoveHierarchy {
     [key: string]: string[];
 }
@@ -19,14 +15,6 @@ export default class Cosmetic extends BotInteraction {
 
     get permissions() {
         return 'ELEVATED_ROLE';
-    }
-
-    get hierarchy(): Hierarchy {
-        return {
-            collectionLog: ['ofThePraesul', 'goldenPraesul'],
-            killCount: ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k', 'kc80k', 'kc90k'],
-            vanity: ['fallenAngel', 'nightmareOfNihils', 'elementalist', 'sageOfElements', 'masterOfElements', 'smokeDemon', 'shadowCackler', 'truebornVampyre', 'glacyteOfLeng', 'praetorianLibrarian', 'coreRupted', 'ollivandersSupplier'],
-        }
     }
 
     get removeHierarchy(): RemoveHierarchy {
@@ -92,7 +80,7 @@ export default class Cosmetic extends BotInteraction {
         const userResponse: User = interaction.options.getUser('user', true);
         const role: string = interaction.options.getString('role', true);
 
-        const { roles, colours, channels, stripRole, categorizeChannel, categorize } = this.client.util;
+        const { roles, colours, channels, stripRole, categorizeChannel, categorize, hierarchy } = this.client.util;
 
         const outputChannelId = categorizeChannel(role) ? channels[categorizeChannel(role)] : '';
         let channel;
@@ -110,7 +98,7 @@ export default class Cosmetic extends BotInteraction {
         const hasHigherRole = (role: string) => {
             try {
                 if (!categorize(role) || categorize(role) === 'vanity' || categorize(role) === '') return false;                
-                const categorizedHierarchy = this.hierarchy[categorize(role)];
+                const categorizedHierarchy = hierarchy[categorize(role)];
                 const sliceFromIndex: number = categorizedHierarchy.indexOf(role) + 1;
                 const hierarchyList = categorizedHierarchy.slice(sliceFromIndex);
                 const hierarchyIdList = hierarchyList.map((item: string) => stripRole(roles[item]));
@@ -127,6 +115,7 @@ export default class Cosmetic extends BotInteraction {
         const roleId = stripRole(roles[role]);
         if (!hasHigherRole(role)) await user?.roles.add(roleId);
         embedColour = roleObject.color;
+        
         if (!(userRoles?.includes(roleId)) && !hasHigherRole(role)) {
             sendMessage = true;
         }
@@ -143,7 +132,7 @@ export default class Cosmetic extends BotInteraction {
         };
 
         const embed = new EmbedBuilder()
-            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() || this.client.user?.avatarURL() || 'https://cdn.discordapp.com/attachments/1027186342620299315/1054206984360050709/445px-Reeves_pet.png' })
+            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() || this.client.user?.avatarURL() || 'https://cdn.discordapp.com/attachments/1027186342620299315/1054206984360050709/445px-Reeves_pet.png' })            
             .setTimestamp()
             .setColor(embedColour)
             .setDescription(`Congratulations to <@${userResponse.id}> on achieving ${roles[role]}!`);

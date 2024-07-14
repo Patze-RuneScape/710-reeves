@@ -1,5 +1,5 @@
 import * as config from '../../config.json';
-import { EmbedBuilder, ChatInputCommandInteraction, Interaction, APIEmbedField } from 'discord.js';
+import { EmbedBuilder, ChatInputCommandInteraction, Interaction, APIEmbedField, ActionRowBuilder, StringSelectMenuOptionBuilder, StringSelectMenuBuilder, Role, ButtonBuilder, ButtonStyle} from 'discord.js';
 import Bot from '../Bot';
 import { Override } from '../entity/Override';
 
@@ -31,6 +31,10 @@ interface Categories {
     killCount: string[]
     collectionLog: string[]
     vanity: string[]
+}
+
+interface Hierarchy {
+    [key: string]: string[];
 }
 
 export default class UtilityHandler {
@@ -187,6 +191,33 @@ export default class UtilityHandler {
                 praetorianLibrarian: '<@&1243320189211377685>',
                 coreRupted: '<@&1243337593882542222>',
                 ollivandersSupplier: '<@&1243337779039965234>',
+                colour_fourMan: '<@&1262092410981318696>',
+                colour_sevenMan: '<@&1262092300314480791>',                
+                colour_fallenAngel: '<@&1262090273538969682>', 
+                colour_nightmareOfNihils: '<@&1262089742804189255>', 
+                colour_elementalist: '<@&1262090603924164639>', 
+                colour_sageOfElements: '<@&1262090529236189236>',
+                colour_masterOfElements: '<@&1262090418267488357>', 
+                colour_smokeDemon: '<@&1262091008037093460>', 
+                colour_shadowCackler: '<@&1262091258843893900>', 
+                colour_truebornVampyre: '<@&1262091083349885140>', 
+                colour_glacyteOfLeng: '<@&1262091186848399360>', 
+                colour_praetorianLibrarian: '<@&1262090933252395099>', 
+                colour_coreRupted: '<@&1262090829212946594>', 
+                colour_ollivandersSupplier: '<@&1262090691329261620>',
+                colour_ofThePraesul: '<@&1262092579541876749>', 
+                colour_goldenPraesul: '<@&1262092501112721498>',
+                colour_trialTeam: '<@&1262090165221064755>',
+                colour_kc10k: '<@&1262092205330272286>',
+                colour_kc20k: '<@&1262092138821455894>',
+                colour_kc30k: '<@&1262092060463464449>',
+                colour_kc40k: '<@&1262091795840503928>',
+                colour_kc50k: '<@&1262091695202504846>',
+                colour_kc60k: '<@&1262091626755391529>',
+                colour_kc70k: '<@&1262091554453979197>',
+                colour_kc80k: '<@&1262091484090470440>',
+                colour_kc90k: '<@&1262091366163415051>',
+                colour_nexAodFCMember: '<@&1262092653944639498>',
             }
         }
         return {
@@ -257,13 +288,92 @@ export default class UtilityHandler {
             praetorianLibrarian: '<@&1243320189211377685>',
             coreRupted: '<@&1243337593882542222>',
             ollivandersSupplier: '<@&1243337779039965234>',
+            colour_fourMan: '<@&1262092410981318696>',
+            colour_sevenMan: '<@&1262092300314480791>',                
+            colour_fallenAngel: '<@&1262090273538969682>', 
+            colour_nightmareOfNihils: '<@&1262089742804189255>', 
+            colour_elementalist: '<@&1262090603924164639>', 
+            colour_sageOfElements: '<@&1262090529236189236>',
+            colour_masterOfElements: '<@&1262090418267488357>', 
+            colour_smokeDemon: '<@&1262091008037093460>', 
+            colour_shadowCackler: '<@&1262091258843893900>', 
+            colour_truebornVampyre: '<@&1262091083349885140>', 
+            colour_glacyteOfLeng: '<@&1262091186848399360>', 
+            colour_praetorianLibrarian: '<@&1262090933252395099>', 
+            colour_coreRupted: '<@&1262090829212946594>', 
+            colour_ollivandersSupplier: '<@&1262090691329261620>',
+            colour_ofThePraesul: '<@&1262092579541876749>', 
+            colour_goldenPraesul: '<@&1262092501112721498>',
+            colour_trialTeam: '<@&1262090165221064755>',
+            colour_kc10k: '<@&1262092205330272286>',
+            colour_kc20k: '<@&1262092138821455894>',
+            colour_kc30k: '<@&1262092060463464449>',
+            colour_kc40k: '<@&1262091795840503928>',
+            colour_kc50k: '<@&1262091695202504846>',
+            colour_kc60k: '<@&1262091626755391529>',
+            colour_kc70k: '<@&1262091554453979197>',
+            colour_kc80k: '<@&1262091484090470440>',
+            colour_kc90k: '<@&1262091366163415051>',
+            colour_nexAodFCMember: '<@&1262092653944639498>',
         }
+    }
+    
+    // register all roles that have an cosmetic colour override role (same name with prefex colour_)
+    // limit at 25 roles per list
+    get cosmeticTrialedRoleNames(): string[]{
+        return [
+            'nexAodFCMember',
+            'fourMan',
+            'sevenMan',            
+            'fallenAngel', 
+            'trialTeam',
+            'nightmareOfNihils',            
+        ];
+    }
+
+    get cosmeticCollectionRoleNames(): string[]{
+        return [            
+            'ofThePraesul', 
+            'goldenPraesul',
+            'elementalist', 
+            'sageOfElements', 
+            'masterOfElements', 
+            'praetorianLibrarian', 
+            'coreRupted', 
+            'ollivandersSupplier',
+            'smokeDemon', 
+            'shadowCackler', 
+            'truebornVampyre', 
+            'glacyteOfLeng',             
+        ];
+    }
+
+    get cosmeticKcRoleNames(): string[]{
+        return [
+            'kc10k',
+            'kc20k',
+            'kc30k',
+            'kc40k',
+            'kc50k',
+            'kc60k',
+            'kc70k',
+            'kc80k',
+            'kc90k'
+        ];
     }
 
     get categories(): Categories {
         return {
             killCount: ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k', 'kc80k', 'kc90k'],
             collectionLog: ['ofThePraesul', 'goldenPraesul'],            
+            vanity: ['fallenAngel', 'nightmareOfNihils', 'elementalist', 'sageOfElements', 'masterOfElements', 'smokeDemon', 'shadowCackler', 'truebornVampyre', 'glacyteOfLeng', 'praetorianLibrarian', 'coreRupted', 'ollivandersSupplier'],
+        }
+    }
+
+    get hierarchy(): Hierarchy {
+        return {
+            collectionLog: ['ofThePraesul', 'goldenPraesul'],
+            killCount: ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k', 'kc80k', 'kc90k'],
             vanity: ['fallenAngel', 'nightmareOfNihils', 'elementalist', 'sageOfElements', 'masterOfElements', 'smokeDemon', 'shadowCackler', 'truebornVampyre', 'glacyteOfLeng', 'praetorianLibrarian', 'coreRupted', 'ollivandersSupplier'],
         }
     }
@@ -413,5 +523,102 @@ export default class UtilityHandler {
             }
         }
         return maxPlayers;
+    }
+
+    public async getColourPanelComponents(interaction: any): Promise<ActionRowBuilder<StringSelectMenuBuilder | ButtonBuilder>[]>{
+        let options: any[] = [];
+        let options2: any[] = [];
+        let options3: any[] = [];
+
+        for (const entry of this.cosmeticTrialedRoleNames){
+            const checkRoleObject = await interaction.guild?.roles.fetch(this.stripRole(this.roles[entry])) as Role;
+
+            if (checkRoleObject){
+                let nextEntry = new StringSelectMenuOptionBuilder()
+                    .setLabel(checkRoleObject.name)
+                    .setDescription(`Override your colour to that of the ${checkRoleObject.name}-Tag!`)
+                    .setValue(entry);
+
+                if (checkRoleObject.icon != null){
+                    nextEntry.setEmoji(checkRoleObject.icon);
+                }
+
+                options.push(nextEntry);                
+            }
+        }
+
+        for (const entry of this.cosmeticCollectionRoleNames){
+            const checkRoleObject = await interaction.guild?.roles.fetch(this.stripRole(this.roles[entry])) as Role;
+
+            if (checkRoleObject){
+                let nextEntry = new StringSelectMenuOptionBuilder()
+                    .setLabel(checkRoleObject.name)
+                    .setDescription(`Override your colour to that of the ${checkRoleObject.name}-Tag!`)
+                    .setValue(entry);
+
+                if (checkRoleObject.icon != null){
+                    nextEntry.setEmoji(checkRoleObject.icon);
+                }
+
+                options2.push(nextEntry);                
+            }
+        }
+
+        for (const entry of this.cosmeticKcRoleNames){
+            const checkRoleObject = await interaction.guild?.roles.fetch(this.stripRole(this.roles[entry])) as Role;
+
+            if (checkRoleObject){
+                let nextEntry = new StringSelectMenuOptionBuilder()
+                    .setLabel(checkRoleObject.name)
+                    .setDescription(`Override your colour to that of the ${checkRoleObject.name}-Tag!`)
+                    .setValue(entry);
+
+                if (checkRoleObject.icon != null){
+                    nextEntry.setEmoji(checkRoleObject.icon);
+                }
+
+                options3.push(nextEntry);                
+            }
+        }
+
+        const selectMenu = new StringSelectMenuBuilder()
+            .setCustomId('colourOverrideSelect')
+            .setPlaceholder('Pick a trialed role colour!')
+            .addOptions(
+                ...options
+            );
+
+        const selectMenu2 = new StringSelectMenuBuilder()
+            .setCustomId('colourOverrideSelect2')
+            .setPlaceholder('Pick a collection role colour!')
+            .addOptions(
+                ...options2
+            );
+        
+        const selectMenu3 = new StringSelectMenuBuilder()
+            .setCustomId('colourOverrideSelect3')
+            .setPlaceholder('Pick a killcount role colour!')
+            .addOptions(
+                ...options3
+            );
+            
+        const actionRow = new ActionRowBuilder<StringSelectMenuBuilder>()
+            .addComponents(selectMenu);
+
+        const actionRow2 = new ActionRowBuilder<StringSelectMenuBuilder>()
+            .addComponents(selectMenu2);
+
+        const actionRow3 = new ActionRowBuilder<StringSelectMenuBuilder>()
+            .addComponents(selectMenu3);     
+            
+        const removeButton = new ButtonBuilder()
+            .setCustomId('removeColour')
+            .setLabel('Remove')
+            .setStyle(ButtonStyle.Danger);
+
+        const removeRow = new ActionRowBuilder<ButtonBuilder>()
+            .addComponents(removeButton);
+
+        return [actionRow, actionRow2, actionRow3, removeRow];
     }
 }
