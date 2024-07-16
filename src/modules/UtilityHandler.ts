@@ -138,6 +138,7 @@ export default class UtilityHandler {
                 kc70k: '<@&1057867190709256261>',
                 kc80k: '<@&1156365536746274886>',
                 kc90k: '<@&1179145482061230231>',
+                kc100k: '<@&1262896895202820168>',
                 ofThePraesul: '<@&1057867190650540082>',
                 goldenPraesul: '<@&1057867190709256260>',
                 trialee: '<@&1057867190596010033>',
@@ -217,6 +218,7 @@ export default class UtilityHandler {
                 colour_kc70k: '<@&1262091554453979197>',
                 colour_kc80k: '<@&1262091484090470440>',
                 colour_kc90k: '<@&1262091366163415051>',
+                colour_kc100k: '<@&1262896950756507741>',
                 colour_nexAodFCMember: '<@&1262092653944639498>',
             }
         }
@@ -234,6 +236,7 @@ export default class UtilityHandler {
             kc70k: '<@&1020821253155721226>',
             kc80k: '<@&1156365536746274886>',
             kc90k: '<@&1179145482061230231>',
+            kc100k: '<@&1262896895202820168>',
             ofThePraesul: '<@&474307399851835414>',
             goldenPraesul: '<@&589268459502960642>',
             trialee: '<@&666034554150322200>',
@@ -314,6 +317,7 @@ export default class UtilityHandler {
             colour_kc70k: '<@&1262091554453979197>',
             colour_kc80k: '<@&1262091484090470440>',
             colour_kc90k: '<@&1262091366163415051>',
+            colour_kc100k: '<@&1262896950756507741>',
             colour_nexAodFCMember: '<@&1262092653944639498>',
         }
     }
@@ -358,13 +362,14 @@ export default class UtilityHandler {
             'kc60k',
             'kc70k',
             'kc80k',
-            'kc90k'
+            'kc90k',
+            'kc100k'
         ];
     }
 
     get categories(): Categories {
         return {
-            killCount: ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k', 'kc80k', 'kc90k'],
+            killCount: ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k', 'kc80k', 'kc90k', 'kc100k'],
             collectionLog: ['ofThePraesul', 'goldenPraesul'],            
             vanity: ['fallenAngel', 'nightmareOfNihils', 'elementalist', 'sageOfElements', 'masterOfElements', 'smokeDemon', 'shadowCackler', 'truebornVampyre', 'glacyteOfLeng', 'praetorianLibrarian', 'coreRupted', 'ollivandersSupplier'],
         }
@@ -373,7 +378,7 @@ export default class UtilityHandler {
     get hierarchy(): Hierarchy {
         return {
             collectionLog: ['ofThePraesul', 'goldenPraesul'],
-            killCount: ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k', 'kc80k', 'kc90k'],
+            killCount: ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k', 'kc80k', 'kc90k', 'kc100k'],
             vanity: ['fallenAngel', 'nightmareOfNihils', 'elementalist', 'sageOfElements', 'masterOfElements', 'smokeDemon', 'shadowCackler', 'truebornVampyre', 'glacyteOfLeng', 'praetorianLibrarian', 'coreRupted', 'ollivandersSupplier'],
         }
     }

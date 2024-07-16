@@ -27,6 +27,7 @@ export default class Cosmetic extends BotInteraction {
             'kc70k': ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k'],
             'kc80k': ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k'],
             'kc90k': ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k', 'kc80k'],
+            'kc100k': ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k', 'kc80k', 'kc90k'],
             'goldenPraesul': ['ofThePraesul']
         }
     }
@@ -44,6 +45,7 @@ export default class Cosmetic extends BotInteraction {
             '70k KC': 'kc70k',
             '80k KC': 'kc80k',
             '90k KC': 'kc90k',
+            '100k KC': 'kc100k',
             'Nex AoD FC Member': 'nexAodFCMember',
             'Fallen Angel': 'fallenAngel',
             'Nightmare of Nihils': 'nightmareOfNihils',
