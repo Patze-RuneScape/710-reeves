@@ -43,7 +43,9 @@ export default class SetColour extends BotInteraction {
             '287634146010988544': '1063310756650680321',
             // Mike
             '238477706214244352': '1063310962419048458',
-            // Test
+            // Logging in/Riley
+            '205529505421328385': '905494614025326672',
+            // Fate
             '258055326215962626': '1121748189876334612',
         }
         return data[userId];
