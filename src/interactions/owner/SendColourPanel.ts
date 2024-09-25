@@ -30,7 +30,7 @@ export default class SendColourPanel extends BotInteraction {
             .setTitle('Choose your own colour!')
             .setTimestamp()
             .setColor(colours.discord.green)
-            .setDescription('Choose an colour-override from any cosmetic tag you have achieved!\r\nYou need to own the corresponding Tag to be able to select it\'s colour!');
+            .setDescription('Choose a colour-override from any cosmetic tag you have achieved!\r\nYou need to own the corresponding Tag to be able to select its colour!');
         
         const getComps = getColourPanelComponents.bind(this.client.util)
 

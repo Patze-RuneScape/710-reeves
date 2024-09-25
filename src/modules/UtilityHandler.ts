@@ -545,7 +545,7 @@ export default class UtilityHandler {
                     .setValue(entry);
 
                 if (checkRoleObject.icon != null){
-                    nextEntry.setEmoji(checkRoleObject.icon);
+                    //nextEntry.setEmoji(checkRoleObject.icon);
                 }
 
                 options.push(nextEntry);                
@@ -562,7 +562,7 @@ export default class UtilityHandler {
                     .setValue(entry);
 
                 if (checkRoleObject.icon != null){
-                    nextEntry.setEmoji(checkRoleObject.icon);
+                    //nextEntry.setEmoji(checkRoleObject.icon);
                 }
 
                 options2.push(nextEntry);                
@@ -579,7 +579,7 @@ export default class UtilityHandler {
                     .setValue(entry);
 
                 if (checkRoleObject.icon != null){
-                    nextEntry.setEmoji(checkRoleObject.icon);
+                    //nextEntry.setEmoji(checkRoleObject.icon);
                 }
 
                 options3.push(nextEntry);                
