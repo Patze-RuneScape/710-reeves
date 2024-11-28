@@ -86,12 +86,12 @@ export default class UtilityHandler {
 
     get emojiIds(): EmojiIds{
         return {
-            greenSanta: '1311760443454521458',
-            redSanta: '1311760398185140254',
-            purpleSanta: '1311760427402919986',
-            blueSanta: '1311760418515058688',
-            pinkSanta: '1311760407676846100',
-            blackSanta: '1311760435581681687',
+            greenSanta: '1311771428059615232',
+            redSanta: '1311771410821288036',
+            purpleSanta: '1311771423983013928',
+            blueSanta: '1311771414948479128',
+            pinkSanta: '1311771412419182592',
+            blackSanta: '1311771425706741912',
         }
     }
 
