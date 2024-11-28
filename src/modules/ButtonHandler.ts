@@ -24,6 +24,7 @@ export default class ButtonHandler {
             case 'disbandTrial': this.disbandTrial(interaction); break;
             case 'startTrial': this.startTrial(interaction); break;
             case 'removeColour': this.removeColour(interaction); break;
+            case 'removeChristmasColour': this.removeChristmasColour(interaction); break;
             default: break;
         }
     }
@@ -439,6 +440,26 @@ export default class ButtonHandler {
             
             if (userRoles.includes(stripRole(roles[colourRole]))) {
                 await user.roles.remove(stripRole(roles[colourRole]));
+            }
+        }
+
+        const resultEmbed = new EmbedBuilder()
+            .setColor(colours.discord.green)
+            .setDescription('Roles successfully removed!');
+        return await interaction.editReply({ embeds: [resultEmbed] });
+    }
+
+    private async removeChristmasColour(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
+        await interaction.deferReply({ ephemeral: true });
+
+        const { roles, christmasSantaRolesNames, colours, stripRole } = this.client.util;
+        const user = await interaction.guild?.members.fetch(interaction.user.id);
+        const userRoles = await user?.roles.cache.map(role => role.id) || [];
+
+        //remove all other colour-roles
+        for (const cosmeticRole of christmasSantaRolesNames){            
+            if (userRoles.includes(stripRole(roles[cosmeticRole]))) {
+                await user.roles.remove(stripRole(roles[cosmeticRole]));
             }
         }
 

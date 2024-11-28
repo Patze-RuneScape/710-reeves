@@ -37,6 +37,10 @@ interface Hierarchy {
     [key: string]: string[];
 }
 
+interface EmojiIds{
+    [emojiName: string]: string;
+}
+
 export default class UtilityHandler {
     constructor(client: Bot) {
         this.client = client;
@@ -77,6 +81,17 @@ export default class UtilityHandler {
             voke: '<:voke:1060164889848590487>',
             hammer: '<:hammer:1060164664266338344>',
             freedom: '<:freedom:1060164666103435384>',
+        }
+    }
+
+    get emojiIds(): EmojiIds{
+        return {
+            greenSanta: '1311760443454521458',
+            redSanta: '1311760398185140254',
+            purpleSanta: '1311760427402919986',
+            blueSanta: '1311760418515058688',
+            pinkSanta: '1311760407676846100',
+            blackSanta: '1311760435581681687',
         }
     }
 
@@ -220,6 +235,12 @@ export default class UtilityHandler {
                 colour_kc90k: '<@&1262091366163415051>',
                 colour_kc100k: '<@&1262896950756507741>',
                 colour_nexAodFCMember: '<@&1262092653944639498>',
+                greenSanta: '<@&1311749759114936442>',
+                redSanta: '<@&1311749851683229748>',
+                purpleSanta: '<@&1311749933350785119>',
+                blueSanta: '<@&1311750005626900480>',
+                pinkSanta: '<@&1311750063919468735>',
+                blackSanta: '<@&1311750151181959168>',
             }
         }
         return {
@@ -319,6 +340,12 @@ export default class UtilityHandler {
             colour_kc90k: '<@&1262091366163415051>',
             colour_kc100k: '<@&1262896950756507741>',
             colour_nexAodFCMember: '<@&1262092653944639498>',
+            greenSanta: '<@&1311081343999803484>',
+            redSanta: '<@&1311082311147589666>',
+            purpleSanta: '<@&1311082972149055609>',
+            blueSanta: '<@&1311083272012566629>',
+            pinkSanta: '<@&1311083772078325861>',
+            blackSanta: '<@&1311084184152047709>',
         }
     }
     
@@ -364,6 +391,17 @@ export default class UtilityHandler {
             'kc80k',
             'kc90k',
             'kc100k'
+        ];
+    }
+
+    get christmasSantaRolesNames(): string[]{
+        return [
+            'greenSanta',
+            'redSanta',
+            'purpleSanta',
+            'blueSanta',
+            'pinkSanta',
+            'blackSanta'
         ];
     }
 
@@ -625,5 +663,43 @@ export default class UtilityHandler {
             .addComponents(removeButton);
 
         return [actionRow, actionRow2, actionRow3, removeRow];
+    }
+
+    public async getChristmasColourPanelComponents(interaction: any): Promise<ActionRowBuilder<StringSelectMenuBuilder | ButtonBuilder>[]>{
+        let options: any[] = [];
+
+        for (const entry of this.christmasSantaRolesNames){
+            const checkRoleObject = await interaction.guild?.roles.fetch(this.stripRole(this.roles[entry])) as Role;
+
+            if (checkRoleObject){
+                let nextEntry = new StringSelectMenuOptionBuilder()
+                    .setLabel(checkRoleObject.name)
+                    //.setDescription(`${checkRoleObject.name}`)
+                    .setValue(entry);
+
+                nextEntry.setEmoji(this.emojiIds[checkRoleObject.name]);
+                options.push(nextEntry);                
+            }
+        }
+
+        const selectMenu = new StringSelectMenuBuilder()
+            .setCustomId('christmasColourOverrideSelect')
+            .setPlaceholder('Pick a santa!')
+            .addOptions(
+                ...options
+            );
+            
+        const actionRow = new ActionRowBuilder<StringSelectMenuBuilder>()
+            .addComponents(selectMenu);  
+            
+        const removeButton = new ButtonBuilder()
+            .setCustomId('removeChristmasColour')
+            .setLabel('Remove')
+            .setStyle(ButtonStyle.Danger);
+
+        const removeRow = new ActionRowBuilder<ButtonBuilder>()
+            .addComponents(removeButton);
+
+        return [actionRow, removeRow];
     }
 }

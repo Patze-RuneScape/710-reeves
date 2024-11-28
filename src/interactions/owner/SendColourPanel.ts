@@ -14,29 +14,63 @@ export default class SendColourPanel extends BotInteraction {
         return 'ELEVATED_ROLE';
     }
 
+    get panelOptions() {
+        const timespanTypes: any = {
+            'Default Panel': 'default',
+            'Christmas Tags': 'christmas'
+        }
+        const options: any = [];
+        Object.keys(timespanTypes).forEach((key: string) => {
+            options.push({ name: key, value: timespanTypes[key] })
+        })
+        return options;
+    }
+
     get slashData() {
         return new SlashCommandBuilder()
             .setName(this.name)
-            .setDescription(this.description);
+            .setDescription(this.description)
+            .addStringOption((option) => option.setName('paneltype').setDescription('Panel Type').addChoices(
+                ...this.panelOptions
+            ));
     }
 
     async run(interaction: ChatInputCommandInteraction) {
         await interaction.deferReply({ ephemeral: true });
 
-        const { colours, getColourPanelComponents } = this.client.util;
+        const { colours, getColourPanelComponents, getChristmasColourPanelComponents } = this.client.util;
         const channel = interaction.channel as TextChannel;
+        const panelType: string  = interaction.options.getString('paneltype', true);
+        let embed = new EmbedBuilder();
 
-        const embed = new EmbedBuilder()
-            .setTitle('Choose your own colour!')
-            .setTimestamp()
-            .setColor(colours.discord.green)
-            .setDescription('Choose a colour-override from any cosmetic tag you have achieved!\r\nYou need to own the corresponding Tag to be able to select its colour!');
+        if (panelType === 'default'){
+            embed = new EmbedBuilder()
+                .setTitle('Choose your own colour!')
+                .setTimestamp()
+                .setColor(colours.discord.green)
+                .setDescription('Choose an colour-override from any cosmetic tag you have achieved!\r\nYou need to own the corresponding Tag to be able to select it\'s colour!');
+            
+            const getComps = getColourPanelComponents.bind(this.client.util)
+
+            await channel.send(
+                { embeds: [embed], components: await getComps(interaction)}
+            )
+        }
+        else if (panelType === 'christmas'){
+            embed = new EmbedBuilder()
+                .setTitle('Choose your own festive colour and santa hat!')
+                .setTimestamp()
+                .setColor(colours.discord.green)
+                .setThumbnail('https://runescape.wiki/images/Green_Santa_hat.png')
+                .setDescription('Choose between 6 differen colour overrides and matching santa-hat role icons!');
+            
+            const getComps = getChristmasColourPanelComponents.bind(this.client.util)
+
+            await channel.send(
+                { embeds: [embed], components: await getComps(interaction)}
+            )
+        }
         
-        const getComps = getColourPanelComponents.bind(this.client.util)
-
-        await channel.send(
-            { embeds: [embed], components: await getComps(interaction)}
-        )
 
         const replyEmbed = new EmbedBuilder()
             .setTitle('Panel send!')
